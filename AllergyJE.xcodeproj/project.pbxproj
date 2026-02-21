@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7A014ACF2F4A05B90036FB7E /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 7A014ACE2F4A05B90036FB7E /* RevenueCat */; };
+		7AA074972F4A097B005E21C8 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 7AA074962F4A097B005E21C8 /* Supabase */; };
+		7AA074992F4A0AD3005E21C8 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 7AA074982F4A0AD3005E21C8 /* RevenueCatUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		7A014AB22F4A04440036FB7E /* AllergyJE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AllergyJE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +29,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7AA074972F4A097B005E21C8 /* Supabase in Frameworks */,
+				7A014ACF2F4A05B90036FB7E /* RevenueCat in Frameworks */,
+				7AA074992F4A0AD3005E21C8 /* RevenueCatUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +42,7 @@
 			isa = PBXGroup;
 			children = (
 				7A014AB42F4A04440036FB7E /* AllergyJE */,
+				7AA074952F4A0966005E21C8 /* Frameworks */,
 				7A014AB32F4A04440036FB7E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +53,13 @@
 				7A014AB22F4A04440036FB7E /* AllergyJE.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7AA074952F4A0966005E21C8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -65,6 +82,9 @@
 			);
 			name = AllergyJE;
 			packageProductDependencies = (
+				7A014ACE2F4A05B90036FB7E /* RevenueCat */,
+				7AA074962F4A097B005E21C8 /* Supabase */,
+				7AA074982F4A0AD3005E21C8 /* RevenueCatUI */,
 			);
 			productName = AllergyJE;
 			productReference = 7A014AB22F4A04440036FB7E /* AllergyJE.app */;
@@ -94,6 +114,10 @@
 			);
 			mainGroup = 7A014AA92F4A04440036FB7E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7A014AC02F4A05170036FB7E /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				7A014ACB2F4A05B90036FB7E /* XCRemoteSwiftPackageReference "purchases-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7A014AB32F4A04440036FB7E /* Products */;
 			projectDirPath = "";
@@ -253,6 +277,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Allergy.je uses your location to detect which restaurant you are in";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allergy.je uses your location to detect which restaurant you are in";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +310,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Allergy.je uses your location to detect which restaurant you are in";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allergy.je uses your location to detect which restaurant you are in";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -328,6 +356,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7A014AC02F4A05170036FB7E /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+		7A014ACB2F4A05B90036FB7E /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.59.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7A014ACE2F4A05B90036FB7E /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A014ACB2F4A05B90036FB7E /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCat;
+		};
+		7AA074962F4A097B005E21C8 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A014AC02F4A05170036FB7E /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+		7AA074982F4A0AD3005E21C8 /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7A014ACB2F4A05B90036FB7E /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCatUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7A014AAA2F4A04440036FB7E /* Project object */;
 }

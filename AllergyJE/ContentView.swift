@@ -1,21 +1,14 @@
-//
-//  ContentView.swift
-//  AllergyJE
-//
-//  Created by James Le Cuirot on 21/02/2026.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        if hasCompletedOnboarding {
+            MainTabView()
+        } else {
+            OnboardingView()
         }
-        .padding()
     }
 }
 

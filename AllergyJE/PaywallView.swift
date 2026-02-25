@@ -182,17 +182,14 @@ struct PackageButton: View {
     
     var packageLabel: String {
         switch package.identifier {
-        case "$rc_monthly": return "Monthly"
-        case "$rc_annual": return "Annual"
         case "monthly": return "Monthly"
         case "annual": return "Annual"
-        case "yearly": return "Yearly"
-        default: return "Monthly"
+        default: return package.storeProduct.localizedTitle
         }
     }
     
     var isAnnual: Bool {
-        package.identifier.contains("annual") || package.identifier.contains("yearly")
+        package.identifier == "annual"
     }
     
     var body: some View {

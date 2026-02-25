@@ -13,7 +13,7 @@ struct AllergyJEApp: App {
     @State private var subscriptionManager = SubscriptionManager.shared
     
     init() {
-        Purchases.configure(withAPIKey: "test_XRSxSvaRiDnyBJDqqsgGQXvfhUm")
+        Purchases.configure(withAPIKey: "appl_VaPXBaPLzonMOoqHAvcLBrsUcaW")
         Purchases.logLevel = .debug
     }
     

@@ -13,13 +13,14 @@ struct AllergyJEApp: App {
     @State private var subscriptionManager = SubscriptionManager.shared
     
     init() {
-        Purchases.configure(withAPIKey: "appl_VaPXBaPLzonMOoqHAvcLBrsUcaW")
+        Purchases.configure(withAPIKey: "test_XRSxSvaRiDnyBJDqqsgGQXvfhUm")
         Purchases.logLevel = .debug
     }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(.light)
                 .environment(subscriptionManager)
         }
     }

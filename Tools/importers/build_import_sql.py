@@ -7,6 +7,8 @@ Inputs:
                               longitude, free_tier)
   Imports/menus/<slug>.csv    category, dish, description, price, then one column per
                               allergen: Y = contains, M = may contain, blank = doesn't
+  Imports/held/<slug>.csv     dishes to leave out (from `allergy-tools review --write`):
+                              the menu's wording contradicts the restaurant's allergen data
 
 A restaurant with an allergen_info_url goes live (is_active = true) with its allergens.
 One without stays hidden (is_active = false). Its menu is stored, but no dish of it can
@@ -133,6 +135,15 @@ def main():
             continue
         with open(path, newline="", encoding="utf-8") as f:
             dishes = list(csv.DictReader(f))
+        # Dishes `allergy-tools review` held back: the restaurant's data contradicts the menu wording.
+        held_path = os.path.join(args.imports, "held", f"{r['slug']}.csv")
+        held = set()
+        if os.path.exists(held_path):
+            with open(held_path, newline="", encoding="utf-8") as f:
+                held = {(h["category"], h["dish"]) for h in csv.DictReader(f)}
+            before = len(dishes)
+            dishes = [d for d in dishes if (d["category"], d["dish"]) not in held]
+            summary.append(f"-- {r['slug']}: held back {before - len(dishes)} dishes listed in {held_path}")
         sql, n_dishes, n_links, live = restaurant_sql(r, dishes, problems)
         parts.append(sql)
         summary.append(f"-- {r['slug']}: {n_dishes} dishes, {n_links} allergen links, {'live' if live else 'hidden'}")

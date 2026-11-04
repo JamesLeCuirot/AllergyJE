@@ -35,6 +35,17 @@ struct DatasetTests {
         #expect(dishes[1].labels == [.sulphites: .mayContain])
     }
 
+    @Test func readsExtraColumnsRowByRow() throws {
+        let csv = """
+        category,dish,description,price,Gluten
+        Starters,Soup,,6,Y
+        Starters,,,,
+        Mains,Pie,,14,Y
+        """
+        #expect(DishDataset.column("category", in: csv) == ["Starters", "Mains"])
+        #expect(try DishDataset.read(csv: csv).map { $0.dish } == ["Soup", "Pie"])
+    }
+
     @Test func reportsCellsItCantRead() {
         let csv = """
         dish,Gluten

@@ -71,6 +71,6 @@ Puddings,Baked Alaska coupe,"Vanilla sponge, house tonka bean ice cream, spiced 
 Puddings,Orange crème brûlée,"Sauternes sultanas, lemon shortbread",11,M,,Y,,M,M,Y,M,,,,Y,,
 Puddings,Cheese selection,"Tête de moine, Barkham blue, Quicke’s cheddar, rye crackers, quince jelly",14,Y,,,,,,Y,,,,,,,
 Puddings,Café Gourmand,"Tiramisu parfait, house chocolate ice cream, lemon shortbread, espresso",11,Y,,Y,,,M,Y,,,,,,,
-Puddings,Ice creams,"Vanilla, Chocolate, or Caramelised white chocolate ice cream; Mango, Strawberry, or Lemon sorbet; served with white chocolate and cherry biscotti",,,,,,,,Y,,,,,Y,,
-Puddings,Sorbets,"Vanilla, Chocolate, or Caramelised white chocolate ice cream; Mango, Strawberry, or Lemon sorbet; served with white chocolate and cherry biscotti",,,,,,,,,,,,,,,
+Puddings,Ice creams,,3.5,,,,,,,Y,,,,,Y,,
+Puddings,Sorbets,,3.5,,,,,,,,,,,,,,
 Puddings,White chocolate and cherry biscotti,,,Y,,Y,,M,,Y,M,,,M,,,

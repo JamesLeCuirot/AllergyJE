@@ -16,6 +16,11 @@ Commands:
              --write                   regenerate AllergyJE/MenuScan/Engine/LearnedAllergenRules.swift
   check    Read the dataset and report any problems.
              --data <folder or file>   CSV dataset (default: Data)
+  review <Imports/menus/slug.csv>
+           Check a restaurant's own allergen data against the predictor before it goes live.
+           Lists dishes where the wording shows an allergen for certain (e.g. "king prawns")
+           that the restaurant doesn't list. Those are probably mistakes in its chart.
+             --write <held.csv>        save them as dishes to hold back from the app
   fetch-supabase
            Export every dish and its allergens from the app's Supabase database.
              --url <project url>       or set SUPABASE_URL
@@ -123,6 +128,53 @@ case "check":
     for allergen in UKAllergen.allCases {
         let count = dishes.filter { $0.labels[allergen] == .contains }.count
         print("  \(allergen.rawValue.padding(toLength: 16, withPad: " ", startingAt: 0))\(count) dishes")
+    }
+
+case "review":
+    guard let path = arguments.first, !path.hasPrefix("--") else { fail("give the menu CSV to review") }
+    let text: String
+    do { text = try String(contentsOf: URL(fileURLWithPath: path), encoding: .utf8) } catch { fail("couldn't read \(path): \(error)") }
+    let dishes: [LabelledDish]
+    do { dishes = try DishDataset.read(csv: text) } catch { fail("\(error)") }
+    let categories = DishDataset.column("category", in: text)
+
+    var held: [(category: String, dish: String, reason: String)] = []
+    var worthAsking: [String] = []
+    for (index, dish) in dishes.enumerated() {
+        let category = index < categories.count ? categories[index] : ""
+        for evidence in AllergenPredictor.standard.assess(dish.text).evidence where dish.labels[evidence.allergen] == nil {
+            let note = "\(dish.dish): the restaurant lists no \(evidence.allergen.phrase), but the menu says \(evidence.terms.joined(separator: ", "))"
+            if evidence.likelihood == .contains {
+                held.append((category, dish.dish, note))
+            } else if evidence.likelihood == .likely {
+                worthAsking.append(note)
+            }
+        }
+    }
+    print("Reviewed \(dishes.count) dishes.\n")
+    if held.isEmpty {
+        print("No contradictions: nothing on the menu names an allergen the restaurant doesn't list.")
+    } else {
+        print("Hold back (the wording names an allergen the restaurant's data doesn't list):")
+        for item in held { print("  [\(item.category)] \(item.reason)") }
+    }
+    if !worthAsking.isEmpty {
+        print("\nWorth asking the restaurant (classic recipes usually include these):")
+        for note in worthAsking { print("  \(note)") }
+    }
+    if let output = option("--write") {
+        var lines = ["category,dish,reason"]
+        var seen = Set<String>()
+        for item in held where seen.insert("\(item.category)\u{1F}\(item.dish)").inserted {
+            let reasons = held.filter { $0.category == item.category && $0.dish == item.dish }.map(\.reason).joined(separator: "; ")
+            lines.append([item.category, item.dish, reasons].map(DishDataset.escape).joined(separator: ","))
+        }
+        do {
+            try (lines.joined(separator: "\n") + "\n").write(to: URL(fileURLWithPath: output), atomically: true, encoding: .utf8)
+            print("\nWrote \(lines.count - 1) dishes to hold back to \(output).")
+        } catch {
+            fail("couldn't write \(output): \(error)")
+        }
     }
 
 case "fetch-supabase":

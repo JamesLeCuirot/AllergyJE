@@ -179,7 +179,20 @@ public enum DishDataset {
         return rows.filter { !($0.count == 1 && $0[0].trimmingCharacters(in: .whitespaces).isEmpty) }
     }
 
-    private static func escape(_ value: String) -> String {
+    /// The values of one column, row by row (header excluded), e.g. "category".
+    public static func column(_ name: String, in text: String) -> [String] {
+        let rows = rows(in: text)
+        guard let header = rows.first, let index = header.firstIndex(where: { $0.lowercased().filter(\.isLetter) == name.lowercased() }) else { return [] }
+        return rows.dropFirst()
+            .filter { row in
+                // Same rows read() keeps: ones with a dish name.
+                guard let dishIndex = header.firstIndex(where: { fieldAliases[$0.lowercased().filter(\.isLetter)] == "dish" }) else { return true }
+                return dishIndex < row.count && !row[dishIndex].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            }
+            .map { index < $0.count ? $0[index] : "" }
+    }
+
+    public static func escape(_ value: String) -> String {
         guard value.contains(where: { $0 == "," || $0 == "\"" || $0.isNewline }) else { return value }
         return "\"" + value.replacingOccurrences(of: "\"", with: "\"\"") + "\""
     }

@@ -221,7 +221,7 @@ struct MenuView: View {
                     )
                     .frame(height: 20)
 
-                    FilterButton(filterActive: $filterActive, userAllergens: userAllergens)
+                    FilterButton(filterActive: $filterActive, userAllergens: userAllergens, isUnlocked: hasAccess)
                         .padding(.horizontal, 20)
                         .padding(.bottom, 20)
                         .background(Color(.systemGroupedBackground))
@@ -415,12 +415,13 @@ struct MenuItemRow: View {
 struct FilterButton: View {
     @Binding var filterActive: Bool
     let userAllergens: [String]
-    @State private var subscriptionManager = SubscriptionManager.shared
+    /// Free on free-tier restaurants; on Pro restaurants it needs a subscription.
+    let isUnlocked: Bool
     @State private var showPaywall = false
 
     var body: some View {
         Button {
-            if subscriptionManager.isSubscribed {
+            if isUnlocked {
                 withAnimation(.spring(duration: 0.4)) {
                     filterActive.toggle()
                 }
@@ -433,16 +434,16 @@ struct FilterButton: View {
                     Circle()
                         .fill(.white.opacity(0.2))
                         .frame(width: 34, height: 34)
-                    Image(systemName: subscriptionManager.isSubscribed ? (filterActive ? "eye.fill" : "eye.slash.fill") : "lock.fill")
+                    Image(systemName: isUnlocked ? (filterActive ? "eye.fill" : "eye.slash.fill") : "lock.fill")
                         .font(.subheadline)
                         .foregroundStyle(.white)
                 }
 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(subscriptionManager.isSubscribed ? (filterActive ? "Showing what you can eat" : "Show me what I can eat") : "Show me what I can eat")
+                    Text(isUnlocked ? (filterActive ? "Showing what you can eat" : "Show me what I can eat") : "Show me what I can eat")
                         .font(.headline)
                         .foregroundStyle(.white)
-                    if !subscriptionManager.isSubscribed {
+                    if !isUnlocked {
                         Text("Pro feature — tap to upgrade")
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.8))
@@ -451,7 +452,7 @@ struct FilterButton: View {
 
                 Spacer()
 
-                if subscriptionManager.isSubscribed && filterActive {
+                if isUnlocked && filterActive {
                     Text("ON")
                         .font(.caption)
                         .fontWeight(.bold)
@@ -460,7 +461,7 @@ struct FilterButton: View {
                         .padding(.vertical, 3)
                         .background(.white.opacity(0.25))
                         .clipShape(Capsule())
-                } else if !subscriptionManager.isSubscribed {
+                } else if !isUnlocked {
                     Text("PRO")
                         .font(.caption)
                         .fontWeight(.bold)
@@ -475,7 +476,7 @@ struct FilterButton: View {
             .padding(.vertical, 14)
             .background(
                 LinearGradient(
-                    colors: subscriptionManager.isSubscribed && filterActive ?
+                    colors: isUnlocked && filterActive ?
                         [Color.green, Color.green.opacity(0.85)] :
                         [Color.navy, Color.navy.opacity(0.85)],
                     startPoint: .leading,
@@ -484,7 +485,7 @@ struct FilterButton: View {
             )
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(
-                color: (subscriptionManager.isSubscribed && filterActive ? Color.green : Color.navy).opacity(0.4),
+                color: (isUnlocked && filterActive ? Color.green : Color.navy).opacity(0.4),
                 radius: 12, y: 6
             )
         }

@@ -47,8 +47,8 @@ struct PaywallView: View {
                             FeatureRow(
                                 icon: "eye.fill",
                                 iconColor: Color.navy,
-                                title: "Filter menus",
-                                subtitle: "See exactly what you can safely eat"
+                                title: "Filter every menu",
+                                subtitle: "See what you can eat at Pro restaurants too"
                             )
                             Divider().padding(.leading, 56)
                             FeatureRow(

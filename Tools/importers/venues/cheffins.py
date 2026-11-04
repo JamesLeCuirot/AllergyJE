@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Cheffins at the Beaumont Inn (La Route de la Haule, St Peter): read its menus' allergen
-codes into Imports/menus/cheffins.csv.
+codes into Imports/charts-on-hold/cheffins.csv.
 
 Sources: the menu PDFs linked from https://cheffinsbeaumont.com/the-menu/ (all made in
 Canva; each pinned by SHA-256 in MENUS below):
@@ -58,7 +58,7 @@ set and Christmas menus (e.g. "Sunday Lunch - Starters"). Dish names keep the pr
 capitals; descriptions are the printed lines joined with spaces.
 
 Usage:
-  python3 Tools/importers/venues/cheffins.py <dir with the PDFs> [--out Imports/menus/cheffins.csv]
+  python3 Tools/importers/venues/cheffins.py <dir with the PDFs> [--out Imports/charts-on-hold/cheffins.csv]
       [--any-version]
 Needs pdfplumber.
 """
@@ -416,7 +416,7 @@ def expand(dish):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("sources", help="directory holding the PDFs, under their published file names")
-    parser.add_argument("--out", default="Imports/menus/cheffins.csv")
+    parser.add_argument("--out", default="Imports/charts-on-hold/cheffins.csv")
     parser.add_argument("--any-version", action="store_true",
                         help="read PDFs other than the ones this script was checked against")
     args = parser.parse_args()

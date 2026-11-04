@@ -1,0 +1,11 @@
+category,dish,description,price,Gluten,Crustaceans,Eggs,Fish,Peanuts,Soybeans,Milk,Nuts,Celery,Mustard,Sesame,Sulphur Dioxide,Lupin,Molluscs
+BRUNCH,BANANA PANCAKES,"homemade secret recipe w/ berries, cream & maple syrup",10.95,Y,,Y,,,,Y,,M,,M,M,,
+BRUNCH,POACHED EGGS & AVOCADO,"organic, free range eggs from our family farm on campaillou w/ sands salsa",10.95,Y,,Y,,,,,,M,,M,M,,
+BRUNCH,BREAKFAST,"bacon, eggs, sausages, black p, hash b, tomato, mushroom, toast",12.00,Y,,Y,,,,,,M,,M,M,Y,
+SANDSWICHES,SMASH BURGER,"two homemade jersey beef smash patties, SANDS burger salt, american cheese, gherkins, brioche bun",10.95,Y,,,,,,,,M,,M,M,,
+SANDSWICHES,SMASH BEAN BURGER,"two homemade smash bean patties, SANDS burger salt, sun blushed ketchup, mole sauce, lettuce, potato bun",10.95,Y,,,,,Y,,,M,,M,M,,
+SANDSWICHES,CHICKEN SANDSWICH,"marinated and fried chicken breast, harissa slaw, lettuce, lemon mayo, brioche bun",10.95,Y,,Y,,,,,,M,,M,M,,
+SANDSWICHES,SANDS BURGER,"two 4oz jersey beef patties, bacon, cheese, lettuce, tomato, gherkin mayo, dijon mayo, burger bun",13.00,Y,,Y,,,,,,M,Y,M,M,,
+SANDSWICHES,SWEET POTATO,"cut like a steak w/ avo, tomato, lettuce, sun blushed ketchup, crispy fried onions, burger bun",9.95,Y,,,,,,,,M,,M,M,,
+KIDS MENU,CHICKEN NUGGETS,All served with chips and lettuce,7.50,Y,,,,,,,,M,,M,M,,
+COFFEE & T,HAZELNUT SYRUP,,0.70,,,,,,,,Y,M,,M,M,,

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Hotel de France, La Terrasse (St Saviour's Road, St Saviour): read the allergens written
-under each dish in its menu PDFs into Imports/menus/hotel-de-france.csv.
+under each dish in its menu PDFs into Imports/charts-on-hold/hotel-de-france.csv.
 
 Sources: PDFs linked from https://www.defrance.co.uk/la-terrasse (and the Sunday lunch PDF
 from https://www.defrance.co.uk/la-terrasse/sunday-lunch), all under
@@ -37,7 +37,8 @@ Within a block: the first line is the dish name; "Add ..." lines with a price ar
 (left out, they have no allergen line of their own); two or more other priced lines are
 options, one row each ("Hot Baguette - Back bacon"); other lines are the description.
 A block with no allergen line is left out and listed: no allergens written can't be told
-apart from "not listed". The two kcal labels and "(V)" etc. stay in names as printed.
+apart from "not listed". Names are as printed, with their "(V)" and kcal labels. Prices
+are the dish's own; the afternoon tea scones take "Scones (2) £5" from its price list.
 
 Duplicates: dishes are matched by name (lower case, accents, "(V)" labels, supplements and
 kcal dropped, ALIASES applied). A dish on several menus with the same allergens is kept
@@ -49,7 +50,7 @@ category: the menu's name and its own section heading, e.g. "Dinner - Small plat
 
 Usage:
   python3 Tools/importers/venues/hotel-de-france.py <dir with the PDFs>
-      [--out Imports/menus/hotel-de-france.csv] [--any-version]
+      [--out Imports/charts-on-hold/hotel-de-france.csv] [--any-version]
 Needs pdfplumber.
 """
 import argparse
@@ -383,7 +384,7 @@ def read_menu(path, menu):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("sources", help="directory holding the PDFs under their published file names")
-    parser.add_argument("--out", default="Imports/menus/hotel-de-france.csv")
+    parser.add_argument("--out", default="Imports/charts-on-hold/hotel-de-france.csv")
     parser.add_argument("--any-version", action="store_true",
                         help="read PDFs other than the ones this script was checked against")
     args = parser.parse_args()

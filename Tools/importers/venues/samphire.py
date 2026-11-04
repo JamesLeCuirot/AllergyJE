@@ -25,7 +25,7 @@ from the restaurant's menu page (--menu), only for the dishes listed in MENU_MAT
 
 Usage:
   python3 Tools/importers/venues/samphire.py samphire-allergens.pdf \
-      [--menu Imports/details/samphire.csv] [--out Imports/menus/samphire.csv]
+      [--menu Imports/details/samphire.csv] [--out Imports/charts-on-hold/samphire.csv]
 Needs pdfplumber.
 """
 import argparse
@@ -185,7 +185,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("pdf")
     parser.add_argument("--menu", help="menu details CSV (category,dish,description,price), e.g. Imports/details/samphire.csv")
-    parser.add_argument("--out", default="Imports/menus/samphire.csv")
+    parser.add_argument("--out", default="Imports/charts-on-hold/samphire.csv")
     parser.add_argument("--any-version", action="store_true",
                         help="read a PDF other than the one this script was checked against")
     args = parser.parse_args()

@@ -258,7 +258,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("a_la_carte_pdf")
     parser.add_argument("express_pdf")
-    parser.add_argument("--out", default=os.path.join(root, "Imports", "menus", "quayside.csv"))
+    parser.add_argument("--out", default=os.path.join(root, "Imports", "charts-on-hold", "quayside.csv"))
     parser.add_argument("--any-version", action="store_true",
                         help="read PDFs other than the ones this script was checked against")
     args = parser.parse_args()

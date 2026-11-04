@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """The Poplars Tea Room (The Poplars, La Moye, St Brelade): read the allergen codes on its
-menu page into Imports/menus/poplars-tea-room.csv.
+menu page into Imports/charts-on-hold/poplars-tea-room.csv.
 
 Source: https://www.thepoplarstearoom.com/menu (Squarespace), saved as HTML. The page has
 no date; its banner says "Re-opening 18th March until 20th September 2026" (seasonal).
@@ -30,11 +30,12 @@ All of these are listed when the script runs.
 
 Section codes: a section description's codes apply to every dish in it for Ploughman's,
 Sausage Roll & Cheese Scone Salads and Salads (they describe what every dish there comes
-with), so those dishes get the union. The Ploughman's is one row: the section's codes plus
+with), so those dishes get the union, and the section description as their own when they
+have none. The Ploughman's is one row: the section's codes plus
 all four fillings' (any two of Brie, Cheddar, Pâté, Ham always include milk). The
 Sandwiches description ends "Gluten free bread also available.(4)": the 4 (eggs) is the
-gluten free bread's, so it isn't added to the sandwiches; the description of each sandwich
-says "Gluten free bread also available (contains egg)" instead.
+gluten free bread's, so it isn't added to the sandwiches (they're on the white/brown bread or
+baguette their codes describe). The script prints this as a note; it isn't in the CSV.
 
 Names: the item title without its codes. Where a title repeats in a section the item's
 description is added ("Homemade Soup & Baguette - Small"). "Per Scoop (2,4,7,13)" under
@@ -43,7 +44,7 @@ category: the section title, as printed.
 
 Usage:
   python3 Tools/importers/venues/poplars-tea-room.py poplars_menu.html
-      [--out Imports/menus/poplars-tea-room.csv] [--any-version]
+      [--out Imports/charts-on-hold/poplars-tea-room.csv] [--any-version]
 """
 import argparse
 import csv
@@ -65,7 +66,6 @@ ICONS = ["01-celery", "02-cereals", "03-crustaceans", "04-eggs", "05-fish", "06-
 MENU_SHA256 = "d382e8ff61dc7be6f1e68c2b4da5d13bb9e50b2fff53dc88911158ec6d452b89"
 TABS = ["FOOD & BITES", "DRINKS"]
 SECTION_CODES_APPLY = {"Ploughman’s", "Sausage Roll & Cheese Scone Salads", "Salads"}
-SANDWICH_NOTE = "Gluten free bread also available (contains egg)"
 CHOOSE_YOUR_OWN = {  # (section, item title) -> why it's left out
     ("Sandwiches", "Additional fillings:"): "an extra filling; codes are per filling",
     ("Toasted Sandwiches", "Fillings - Choose any two for"): "build your own: (2,7) plus the two fillings chosen",
@@ -142,7 +142,7 @@ def strip_codes(text):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("html")
-    parser.add_argument("--out", default="Imports/menus/poplars-tea-room.csv")
+    parser.add_argument("--out", default="Imports/charts-on-hold/poplars-tea-room.csv")
     parser.add_argument("--any-version", action="store_true",
                         help="read a menu other than the one this script was checked against")
     args = parser.parse_args()
@@ -212,8 +212,9 @@ def main():
                     description = strip_codes(section["description"])
             elif section_codes and sname != "Sandwiches":
                 fail(f"{where}: section codes {sorted(section_codes)} with no rule for them")
-            if sname == "Sandwiches":
-                description = f"{description}. {SANDWICH_NOTE}" if description else SANDWICH_NOTE
+            if sname == "Sandwiches" and section_codes and k == 1:
+                notes.append(f"[{sname}] section description: {section['description']!r}: code(s) "
+                             f"{sorted(section_codes)} not added to the sandwiches (they're the gluten free bread's)")
             if not codes:
                 left_out.append(f"{where} {desc} £{price} -- no codes printed")
                 continue

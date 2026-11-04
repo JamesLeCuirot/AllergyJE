@@ -403,6 +403,9 @@ public nonisolated enum AllergenRules {
     coconut, nutmeg, water chestnut, tiger nut, butternut: -
     gianduja, nutella: nuts!, milk!
     nougat: nuts~, eggs~
+    torrone, torroncino: nuts~, eggs~
+    pistacchio, pistache: nuts!
+    goma: sesame!
     amaretto, disaronno: nuts?
     frangelico: nuts~
     baklava: nuts!, gluten!, milk~

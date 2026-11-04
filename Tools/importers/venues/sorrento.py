@@ -304,7 +304,7 @@ def main():
     root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("pdf")
-    parser.add_argument("--out", default=os.path.join(root, "Imports", "menus", "sorrento.csv"))
+    parser.add_argument("--out", default=os.path.join(root, "Imports", "charts-on-hold", "sorrento.csv"))
     parser.add_argument("--any-version", action="store_true",
                         help="read a PDF other than the one this script was checked against")
     args = parser.parse_args()

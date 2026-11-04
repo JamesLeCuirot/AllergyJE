@@ -64,4 +64,8 @@ Saves the current misses to `Data/baseline.json`. `swift test` fails if a later 
 
 ## Backend
 
-Restaurant data lives in Supabase (`RestaurantStore.swift`) in these tables: `restaurants`, `menu_categories`, `menu_items`, `menu_item_allergens`, `allergens` and `menu_reports`. Subscriptions use RevenueCat (`SubscriptionManager.swift`) with the "AllergyJE Pro" entitlement.
+Restaurant data lives in Supabase (`RestaurantStore.swift`) in these tables: `restaurants`, `menu_categories`, `menu_items`, `menu_item_allergens`, `allergens` and `menu_reports`. The app is free: there is no paid tier.
+
+The app lists restaurants with `is_listed = true`. Where a restaurant publishes its own allergen information (`allergen_info_url`), the menu shows those allergens and links to the source. Where it doesn't, the menu shows allergens estimated by the prediction engine, labelled as estimates, and never marks a dish as safe. `Imports/README.md` explains how restaurants are added.
+
+Releasing to TestFlight: see [docs/TESTFLIGHT.md](docs/TESTFLIGHT.md).

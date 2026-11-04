@@ -5,16 +5,19 @@ Inputs:
   Imports/restaurants.csv     one row per restaurant (slug, name, address, phone, website,
                               menu_url, allergen_info_url, allergen_info_date, latitude,
                               longitude, free_tier, menu). "menu" names a shared menu file
-                              for chain branches; blank means menus/<slug>.csv.
+                              for chain branches; blank means menus/<slug>.csv. free_tier
+                              is ignored: the app is free.
   Imports/menus/<slug>.csv    category, dish, description, price, then one column per
                               allergen: Y = contains, M = may contain, blank = doesn't
   Imports/held/<slug>.csv     dishes to leave out (from `allergy-tools review --write`):
                               the menu's wording contradicts the restaurant's allergen data
 
-A restaurant with an allergen_info_url goes live (is_active = true) with its allergens.
-One without stays hidden (is_active = false). Its menu is stored, but no dish of it can
-reach the app looking allergen-free. Re-running replaces each restaurant's menu, keyed on
-its slug. Leave free_tier blank to keep the current setting (new restaurants start as Pro).
+Every restaurant is listed in the app (is_listed = true), with its dishes in menu order.
+One with an allergen_info_url also gets is_active = true and its allergens. One without
+gets no allergen rows and is_active = false: app 1.1+ shows it with allergens estimated
+from the dish names, never as safe, and older builds (which list is_active restaurants
+and read "no allergens" as allergen-free) don't see it at all. Re-running replaces each
+restaurant's menu, keyed on its slug.
 
 Usage:
   python3 Tools/importers/build_import_sql.py [--only slug …] [--new] > import.sql
@@ -66,19 +69,14 @@ def restaurant_sql(r, dishes, problems, new_only=False):
             if v and not live:
                 problems.append(f"{slug}: '{d['dish']}' has allergens but the restaurant has no allergen_info_url")
 
-    free = r.get("free_tier", "").strip().lower()
-    free_sql = {"true": "true", "yes": "true", "y": "true", "false": "false", "no": "false", "n": "false"}.get(free)
-    cols = "import_slug, name, address, phone, website, menu_url, allergen_info_url, allergen_info_date, latitude, longitude, is_active"
+    # is_free_tier only matters to builds that still have a paid tier: unlock everything.
+    cols = "import_slug, name, address, phone, website, menu_url, allergen_info_url, allergen_info_date, latitude, longitude, is_active, is_listed, is_free_tier"
     vals = ", ".join([q(slug), q(r["name"]), q(r["address"]), q(r["phone"]), q(r["website"]), q(r["menu_url"]),
                       q(r["allergen_info_url"]), q(r["allergen_info_date"]), number(r["latitude"]), number(r["longitude"]),
-                      "true" if live else "false"])
+                      "true" if live else "false", "true", "true"])
     updates = ", ".join(f"{c} = excluded.{c}" for c in cols.split(", ")[1:])
-    if free_sql:
-        cols += ", is_free_tier"
-        vals += f", {free_sql}"
-        updates += ", is_free_tier = excluded.is_free_tier"
 
-    out = [f"-- {r['name']} ({'live: allergen data from the restaurant' if live else 'hidden: menu only, no allergen data'})"]
+    out = [f"-- {r['name']} ({'allergen data from the restaurant' if live else 'menu only: the app estimates allergens'})"]
     if new_only:
         # Fails on the unique import_slug if the restaurant is already there.
         out.append(f"insert into restaurants ({cols}) values ({vals});")
@@ -95,10 +93,10 @@ def restaurant_sql(r, dishes, problems, new_only=False):
         out.append(f"insert into menu_categories (restaurant_id, name, display_order)\nselect {rid}, v.name, v.ord from (values\n  {rows}\n) as v(name, ord);")
 
     if dishes:
-        rows = ",\n  ".join(f"({q(d['category'] or 'Menu')}, {q(d['dish'])}, {q(d['description'])}, {number(d['price'])}::numeric)" for d in dishes)
+        rows = ",\n  ".join(f"({q(d['category'] or 'Menu')}, {q(d['dish'])}, {q(d['description'])}, {number(d['price'])}::numeric, {i})" for i, d in enumerate(dishes))
         out.append(
-            "insert into menu_items (category_id, restaurant_id, name, description, price, is_available)\n"
-            f"select c.id, c.restaurant_id, v.name, v.description, v.price, true from (values\n  {rows}\n) as v(category, name, description, price)\n"
+            "insert into menu_items (category_id, restaurant_id, name, description, price, is_available, display_order)\n"
+            f"select c.id, c.restaurant_id, v.name, v.description, v.price, true, v.ord from (values\n  {rows}\n) as v(category, name, description, price, ord)\n"
             f"join menu_categories c on c.restaurant_id = {rid} and c.name = v.category;")
 
     # One row per dish: comma-separated allergens it contains, and ones it may contain.
@@ -157,7 +155,7 @@ def main():
             summary.append(f"-- {r['slug']}: held back {before - len(dishes)} dishes listed in {held_path}")
         sql, n_dishes, n_links, live = restaurant_sql(r, dishes, problems, new_only=args.new)
         parts.append(sql)
-        summary.append(f"-- {r['slug']}: {n_dishes} dishes, {n_links} allergen links, {'live' if live else 'hidden'}")
+        summary.append(f"-- {r['slug']}: {n_dishes} dishes, {n_links} allergen links, {'restaurant data' if live else 'menu only'}")
 
     if problems:
         print("Problems:", *problems, sep="\n  ", file=sys.stderr)

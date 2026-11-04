@@ -1,6 +1,5 @@
 import SwiftUI
 import Supabase
-import RevenueCat
 
 let supabase = SupabaseClient(
     supabaseURL: URL(string: "https://jyreijzgwjwgztfuswzu.supabase.co")!,
@@ -9,19 +8,10 @@ let supabase = SupabaseClient(
 
 @main
 struct AllergyJEApp: App {
-    
-    @State private var subscriptionManager = SubscriptionManager.shared
-    
-    init() {
-        Purchases.configure(withAPIKey: "test_XRSxSvaRiDnyBJDqqsgGQXvfhUm")
-        Purchases.logLevel = .debug
-    }
-    
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.light)
-                .environment(subscriptionManager)
         }
     }
 }

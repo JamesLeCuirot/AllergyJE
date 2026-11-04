@@ -6,9 +6,9 @@ import MenuEngine
 
 /// Reads the app's restaurant menus from Supabase as labelled dishes.
 ///
-/// Uses the public REST API with the anon key, so it sees exactly what the app sees:
-/// active restaurants and available dishes. Hidden (menu-only) restaurants are left out,
-/// because their dishes have no allergen data and would look allergen-free.
+/// Uses the public REST API with the anon key. Only restaurants whose allergen data comes
+/// from the restaurant itself are read: the app also lists menu-only restaurants, but
+/// their dishes have no allergen rows and would look allergen-free here.
 public enum SupabaseExport {
     public struct ExportError: Error, CustomStringConvertible {
         public let description: String
@@ -30,6 +30,8 @@ public enum SupabaseExport {
             components.queryItems = [
                 URLQueryItem(name: "select", value: "name,description,restaurants!inner(name),menu_item_allergens(level,allergens(name))"),
                 URLQueryItem(name: "is_available", value: "eq.true"),
+                URLQueryItem(name: "restaurants.is_active", value: "eq.true"),
+                URLQueryItem(name: "restaurants.allergen_info_url", value: "not.is.null"),
                 URLQueryItem(name: "order", value: "id"),
                 URLQueryItem(name: "limit", value: String(pageSize)),
                 URLQueryItem(name: "offset", value: String(rows.count)),

@@ -393,31 +393,39 @@ struct RestaurantSearchSheet: View {
         }
     }
 
-    var freeTier: [Restaurant] { filtered.filter { $0.isFreeTier } }
-    var premium: [Restaurant] { filtered.filter { !$0.isFreeTier } }
+    /// Restaurants whose allergen information comes from the restaurant itself.
+    var withRestaurantData: [Restaurant] { filtered.filter { $0.hasRestaurantAllergenData } }
+    /// Menu-only restaurants: the app estimates their allergens.
+    var estimated: [Restaurant] { filtered.filter { !$0.hasRestaurantAllergenData } }
 
     var body: some View {
         NavigationStack {
             List {
-                if !freeTier.isEmpty {
-                    Section("Free") {
-                        ForEach(freeTier) { restaurant in
+                if !withRestaurantData.isEmpty {
+                    Section {
+                        ForEach(withRestaurantData) { restaurant in
                             RestaurantRow(restaurant: restaurant) {
                                 selectedRestaurant = restaurant
                                 dismiss()
                             }
                         }
+                    } header: {
+                        Text("Allergen information from the restaurant")
                     }
                 }
 
-                if !premium.isEmpty {
-                    Section("Pro") {
-                        ForEach(premium) { restaurant in
+                if !estimated.isEmpty {
+                    Section {
+                        ForEach(estimated) { restaurant in
                             RestaurantRow(restaurant: restaurant) {
                                 selectedRestaurant = restaurant
                                 dismiss()
                             }
                         }
+                    } header: {
+                        Text("Menu only: allergens estimated")
+                    } footer: {
+                        Text("We don't have allergen information from these restaurants, so Allergy.je estimates it from the menu. Always ask staff.")
                     }
                 }
             }
@@ -462,10 +470,11 @@ struct RestaurantRow: View {
 
                 Spacer()
 
-                if !restaurant.isFreeTier {
-                    Image(systemName: "lock.fill")
+                if restaurant.hasRestaurantAllergenData {
+                    Image(systemName: "checkmark.shield.fill")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.green)
+                        .accessibilityLabel("Allergen information from the restaurant")
                 }
             }
         }

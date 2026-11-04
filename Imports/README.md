@@ -9,11 +9,14 @@ Restaurants and menus to load into the app's Supabase database, with where each 
 | `details/<slug>*.csv` | Descriptions and prices read from the restaurant's menu pages. |
 | `aliases/<slug>.csv` | Where a restaurant names a dish differently on its allergen menu and its menu page. |
 
-**A restaurant goes live only with allergen data from the restaurant itself.** One without
-`allergen_info_url` is loaded hidden (`is_active = false`), and its dish rows carry no
-allergens. Otherwise the app, which reads "no allergens listed" as allergen-free, would show
-those dishes as safe. Menu dishes that aren't on the allergen menu (specials, set menus,
-different portion sizes) are left out for the same reason.
+**Allergens are only ever stored from the restaurant's own information.** Every imported
+restaurant is listed in the app (`is_listed = true`), but only one with an
+`allergen_info_url` gets allergen rows and `is_active = true`. For one without, the app
+(1.1 and later) shows allergens it estimates from the dish names, labelled as estimates,
+and never marks a dish as safe. `is_active` stays false for those because builds before 1.1
+list `is_active` restaurants and read "no allergens listed" as allergen-free. Menu dishes
+that aren't on the allergen menu (specials, set menus, different portion sizes) are left out
+of a restaurant with allergen data for the same reason.
 
 ## Sources
 
@@ -24,9 +27,9 @@ different portion sizes) are left out for the same reason.
 | Café Ubé (Jersey Airport, airside and landside) | [Allergen chart PDF](https://media-service.tpagency.com/media/jpr/2026/10/6b0df503-ac87-40fc-ae7d-0de2cefec20a.pdf), linked from https://jprestaurants.com/cafe-ube/ | 26 October 2026 | read by `Tools/importers/venues/cafe-ube.py` |
 | PizzaExpress St Helier and St Brelade (one shared menu, `menus/pizzaexpress-jersey.csv`) | [Allergen guide PDF](https://content-cdn.pizzaexpress.com/files/lj3txstz/production/add3fef9032910e30e9952aa716a9d30f7c164ab.pdf), linked from https://www.pizzaexpress.com/jersey-st-helier | 1 November 2026 | read by `Tools/importers/venues/pizzaexpress.py` |
 | The Loft: Pizzeria & Coffeehouse, St Aubin | [Allergen chart PDF](https://www.theloft.je/_files/ugd/190ce0_6a159832614e4ed3a4890962ad5c7e26.pdf), linked from https://www.theloft.je/ | 11 May 2026 | read by `Tools/importers/venues/the-loft.py` |
-| Oyster Box, Jersey Crab Shack, and 24 more | None published. Menu only, hidden; see `menu_url` in `restaurants.csv` | | |
+| Oyster Box, Jersey Crab Shack, and 24 more | None published. Menu only, shown with estimated allergens; see `menu_url` in `restaurants.csv` | | |
 
-### Published a chart, but kept hidden
+### Published a chart, but not used
 
 **Samphire** publishes an [allergen chart](https://www.samphire.je/build/img/slider/Autumn-2026.pdf)
 (Autumn 2026). `Tools/importers/venues/samphire.py` reads it, and the reading matches the
@@ -39,8 +42,8 @@ rendered page, but the chart itself isn't safe to put live yet:
   marked on 11 rows, including Bearnaise and the cheese course.
 
 When a chart is this wrong where it can be checked, it can't be trusted on dishes whose
-names give nothing away. Samphire stays menu-only, with no `allergen_info_url`, until the
-restaurant answers. To put it live: confirm the points above, run the script without
+names give nothing away. Samphire stays menu-only (shown with estimates), with no
+`allergen_info_url`, until the restaurant answers. To put it live: confirm the points above, run the script without
 `--out`, set `allergen_info_url` and `allergen_info_date`, then review as usual.
 
 Source PDFs and pages are downloaded into `sources/` (not committed). Re-download them to rebuild.
@@ -78,8 +81,9 @@ Released after review (the review flagged these, but the chart is right):
 - PizzaExpress: the garlic breads made with vegan mozzarella. "Mozzarella" normally means
   milk, but these are the vegan versions and the chart is right to leave milk off.
 
-Restaurants loaded hidden don't need coordinates yet. Fill them in, by hand or with
-`python3 Tools/importers/geocode.py`, when a restaurant goes live.
+Fill in coordinates, by hand or with `python3 Tools/importers/geocode.py`, so the app can
+tell when someone is at the restaurant. Nominatim rarely finds full addresses; the
+restaurant's own website often embeds its coordinates.
 
 ## Loading into Supabase
 

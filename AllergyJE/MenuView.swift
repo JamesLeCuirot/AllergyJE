@@ -4,142 +4,75 @@ struct MenuView: View {
     let restaurant: Restaurant
 
     @State private var menuData: [MenuCategory: [MenuItem]] = [:]
+    /// Allergens estimated from each dish's wording, for a restaurant that has no allergen
+    /// information of its own. Empty otherwise.
+    @State private var estimates: [UUID: DishAssessment] = [:]
     @State private var isLoading = true
     @State private var filterActive = false
     @State private var showReportSheet = false
     @State private var reportingItem: MenuItem?
-    @State private var showPaywall = false
+    @State private var explainingItem: MenuItem?
     @State private var appeared = false
-    @State private var subscriptionManager = SubscriptionManager.shared
 
     var userAllergens: [String] {
         UserDefaults.standard.stringArray(forKey: "guestAllergens") ?? []
     }
 
-    var hasAccess: Bool {
-        restaurant.isFreeTier || subscriptionManager.isSubscribed
+    /// True when the allergens shown are the app's estimates, not the restaurant's.
+    private var isEstimated: Bool {
+        !restaurant.hasRestaurantAllergenData
     }
 
     var sortedCategories: [MenuCategory] {
         menuData.keys.sorted { $0.displayOrder < $1.displayOrder }
     }
 
-    var safeItemCount: Int {
-        menuData.values.flatMap { $0 }.filter { item in
-            !item.allergens.map { $0.name }.contains(where: { userAllergens.contains($0) })
+    private var allItems: [MenuItem] {
+        menuData.values.flatMap { $0 }
+    }
+
+    /// Dishes with none of the user's allergens: none listed by the restaurant or, for an
+    /// estimated menu, none spotted in the wording.
+    private var clearItemCount: Int {
+        allItems.filter { item in
+            DishAllergens(item: item, estimate: estimates[item.id]).conflicts(with: userAllergens).isEmpty
         }.count
     }
 
-    var totalItemCount: Int {
-        menuData.values.flatMap { $0 }.count
-    }
-
     var body: some View {
-        Group {
-            if hasAccess {
-                menuContent
-            } else {
-                lockedContent
+        menuContent
+            .navigationTitle(restaurant.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $showReportSheet) {
+                ReportIssueSheet(restaurant: restaurant, menuItem: reportingItem)
             }
-        }
-        .navigationTitle(restaurant.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
-        }
-        .sheet(isPresented: $showReportSheet) {
-            ReportIssueSheet(restaurant: restaurant, menuItem: reportingItem)
-        }
-        .task {
-            if hasAccess {
-                menuData = await RestaurantStore.shared.fetchMenu(for: restaurant.id)
+            .sheet(item: $explainingItem) { item in
+                DishDetailSheet(
+                    dish: ScannedDish(
+                        id: 0,
+                        text: item.menuText,
+                        box: .zero,
+                        isDish: true,
+                        assessment: estimates[item.id] ?? AllergenPredictor.standard.assess(item.menuText)
+                    ),
+                    allergens: UKAllergen.set(from: userAllergens)
+                )
+            }
+            .task {
+                let menu = await RestaurantStore.shared.fetchMenu(for: restaurant.id)
+                if isEstimated {
+                    var found: [UUID: DishAssessment] = [:]
+                    for item in menu.values.joined() {
+                        found[item.id] = AllergenPredictor.standard.assess(item.menuText)
+                    }
+                    estimates = found
+                }
+                menuData = menu
                 isLoading = false
                 withAnimation(.spring(duration: 0.5)) {
                     appeared = true
                 }
             }
-        }
-    }
-
-    // MARK: - Locked Content
-    var lockedContent: some View {
-        VStack(spacing: 0) {
-            Spacer()
-
-            VStack(spacing: 28) {
-                ZStack {
-                    Circle()
-                        .fill(Color.navy.opacity(0.08))
-                        .frame(width: 130, height: 130)
-                    Circle()
-                        .fill(Color.navy.opacity(0.05))
-                        .frame(width: 100, height: 100)
-                    Image(systemName: "lock.fill")
-                        .font(.system(size: 44))
-                        .foregroundStyle(Color.navy)
-                }
-
-                VStack(spacing: 10) {
-                    Text("Pro Restaurant")
-                        .font(.title2)
-                        .fontWeight(.bold)
-
-                    Text("\(restaurant.name) is available on Allergy.je Pro. Upgrade to access all restaurants and menus across Jersey.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
-                }
-
-                VStack(spacing: 16) {
-                    // Feature list
-                    VStack(alignment: .leading, spacing: 12) {
-                        ProFeatureRow(icon: "building.2.fill", text: "All restaurants in Jersey")
-                        ProFeatureRow(icon: "menucard.fill", text: "Full menus with allergen filtering")
-                        ProFeatureRow(icon: "checkmark.shield.fill", text: "Verified allergen information")
-                    }
-                    .padding(16)
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                    .padding(.horizontal, 24)
-
-                    Button {
-                        showPaywall = true
-                    } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "star.fill")
-                                .foregroundStyle(.yellow)
-                            Text("Upgrade to Pro")
-                                .fontWeight(.semibold)
-                            Spacer()
-                            Text("£1.99/mo")
-                                .font(.subheadline)
-                                .opacity(0.85)
-                        }
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 16)
-                        .background(
-                            LinearGradient(
-                                colors: [Color.navy, Color.navy.opacity(0.85)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .shadow(color: Color.navy.opacity(0.35), radius: 10, y: 5)
-                        .padding(.horizontal, 24)
-                    }
-
-                    Text("Cancel anytime · Family sharing available")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            Spacer()
-        }
-        .background(Color(.systemGroupedBackground))
     }
 
     // MARK: - Menu Content
@@ -167,26 +100,15 @@ struct MenuView: View {
                         .padding(.top, 60)
 
                     } else {
-                        // Safe items summary banner
-                        if filterActive && !userAllergens.isEmpty {
-                            HStack(spacing: 10) {
-                                Image(systemName: "checkmark.shield.fill")
-                                    .foregroundStyle(.green)
-                                Text("\(safeItemCount) of \(totalItemCount) items are safe for you")
-                                    .font(.subheadline)
-                                    .fontWeight(.medium)
-                                Spacer()
-                            }
+                        AllergenSourceBanner(restaurant: restaurant)
                             .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .background(Color.green.opacity(0.1))
-                            .overlay(
-                                Rectangle()
-                                    .fill(Color.green.opacity(0.3))
-                                    .frame(height: 1),
-                                alignment: .bottom
-                            )
-                            .transition(.move(edge: .top).combined(with: .opacity))
+                            .padding(.top, 12)
+
+                        if filterActive && !userAllergens.isEmpty {
+                            FilterSummaryBanner(clear: clearItemCount, total: allItems.count, isEstimate: isEstimated)
+                                .padding(.horizontal, 16)
+                                .padding(.top, 10)
+                                .transition(.move(edge: .top).combined(with: .opacity))
                         }
 
                         ForEach(Array(sortedCategories.enumerated()), id: \.element.id) { index, category in
@@ -194,15 +116,19 @@ struct MenuView: View {
                                 category: category,
                                 items: menuData[category] ?? [],
                                 userAllergens: userAllergens,
+                                estimates: estimates,
                                 filterActive: filterActive,
                                 onReport: { item in
                                     reportingItem = item
                                     showReportSheet = true
+                                },
+                                onExplain: { item in
+                                    explainingItem = item
                                 }
                             )
                             .offset(y: appeared ? 0 : 20)
                             .opacity(appeared ? 1 : 0)
-                            .animation(.spring(duration: 0.5).delay(Double(index) * 0.08), value: appeared)
+                            .animation(.spring(duration: 0.5).delay(Double(min(index, 6)) * 0.08), value: appeared)
                         }
 
                         Color.clear.frame(height: 110)
@@ -221,7 +147,7 @@ struct MenuView: View {
                     )
                     .frame(height: 20)
 
-                    FilterButton(filterActive: $filterActive, userAllergens: userAllergens, isUnlocked: hasAccess)
+                    FilterButton(filterActive: $filterActive, userAllergens: userAllergens, isEstimate: isEstimated)
                         .padding(.horizontal, 20)
                         .padding(.bottom, 20)
                         .background(Color(.systemGroupedBackground))
@@ -237,26 +163,141 @@ struct MenuView: View {
                     Image(systemName: "exclamationmark.circle")
                         .foregroundStyle(Color.navy)
                 }
+                .accessibilityLabel("Report a problem with this menu")
             }
         }
     }
 }
 
-// MARK: - Pro Feature Row
-struct ProFeatureRow: View {
-    let icon: String
-    let text: String
+// MARK: - Dish allergens
+
+extension MenuItem {
+    /// Name and description, as the predictor reads them.
+    var menuText: String {
+        guard let description, !description.isEmpty else { return name }
+        return "\(name) \(description)"
+    }
+}
+
+/// One dish's allergens as the menu shows them: the restaurant's own, or estimated.
+struct DishAllergens {
+    struct Tag: Hashable {
+        /// The allergen's stored name, e.g. "Milk", "Sulphur Dioxide".
+        let allergen: String
+        /// What the chip says, e.g. "Milk", "May contain tree nuts", "Likely contains egg".
+        let text: String
+    }
+
+    let tags: [Tag]
+    let isEstimate: Bool
+
+    init(item: MenuItem, estimate: DishAssessment?) {
+        if let estimate {
+            isEstimate = true
+            tags = estimate.evidence.map { evidence in
+                Tag(allergen: evidence.allergen.rawValue, text: "\(evidence.likelihood.label) \(evidence.allergen.phrase)")
+            }
+        } else {
+            isEstimate = false
+            tags = item.allergens.map { allergen in
+                guard item.mayContain.contains(allergen.name) else {
+                    return Tag(allergen: allergen.name, text: allergen.name)
+                }
+                let phrase = UKAllergen(rawValue: allergen.name)?.phrase ?? allergen.name.lowercased()
+                return Tag(allergen: allergen.name, text: "May contain \(phrase)")
+            }
+        }
+    }
+
+    /// The tags that are among the user's allergens.
+    func conflicts(with userAllergens: [String]) -> [Tag] {
+        tags.filter { userAllergens.contains($0.allergen) }
+    }
+}
+
+// MARK: - Allergen Source Banner
+
+/// Says where this menu's allergen information comes from.
+struct AllergenSourceBanner: View {
+    let restaurant: Restaurant
 
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
+        if restaurant.hasRestaurantAllergenData {
+            VStack(alignment: .leading, spacing: 6) {
+                Label {
+                    Text(sourceText)
+                } icon: {
+                    Image(systemName: "checkmark.shield.fill")
+                        .foregroundStyle(.green)
+                }
                 .font(.subheadline)
-                .foregroundStyle(Color.navy)
-                .frame(width: 24)
-            Text(text)
+
+                if let link = restaurant.allergenInfoURL.flatMap({ URL(string: $0) }) {
+                    Link("View the restaurant's allergen information", destination: link)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                }
+
+                Text("Recipes change. Always tell staff about your allergies when you order.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(Color.green.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+        } else {
+            VStack(alignment: .leading, spacing: 6) {
+                Label {
+                    Text("Allergens on this menu are estimates")
+                        .fontWeight(.semibold)
+                } icon: {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
+                }
                 .font(.subheadline)
-            Spacer()
+
+                Text("We don't have allergen information from \(restaurant.name), so Allergy.je has estimated it from the dish names and descriptions. Estimates can miss hidden ingredients, and are least reliable for celery, mustard, sesame, soya and sulphites. Ask staff before you order.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(Color.orange.opacity(0.08))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
         }
+    }
+
+    private var sourceText: String {
+        if let date = restaurant.allergenInfoDateText {
+            return "Allergens from \(restaurant.name)'s own allergen information, dated \(date)."
+        }
+        return "Allergens from \(restaurant.name)'s own allergen information."
+    }
+}
+
+// MARK: - Filter Summary Banner
+
+private struct FilterSummaryBanner: View {
+    let clear: Int
+    let total: Int
+    let isEstimate: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: isEstimate ? "questionmark.circle.fill" : "checkmark.shield.fill")
+                .foregroundStyle(isEstimate ? Color.orange : Color.green)
+            Text(isEstimate
+                 ? "\(clear) of \(total) dishes show no sign of your allergens. Ask staff to confirm."
+                 : "\(clear) of \(total) dishes have none of your allergens, according to the restaurant.")
+                .font(.subheadline)
+                .fontWeight(.medium)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background((isEstimate ? Color.orange : Color.green).opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 }
 
@@ -265,8 +306,10 @@ struct MenuCategorySection: View {
     let category: MenuCategory
     let items: [MenuItem]
     let userAllergens: [String]
+    let estimates: [UUID: DishAssessment]
     let filterActive: Bool
     let onReport: (MenuItem) -> Void
+    let onExplain: (MenuItem) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -282,8 +325,10 @@ struct MenuCategorySection: View {
                     MenuItemRow(
                         item: item,
                         userAllergens: userAllergens,
+                        estimate: estimates[item.id],
                         filterActive: filterActive,
-                        onReport: { onReport(item) }
+                        onReport: { onReport(item) },
+                        onExplain: { onExplain(item) }
                     )
                     .padding(.horizontal, 16)
                 }
@@ -297,15 +342,26 @@ struct MenuCategorySection: View {
 struct MenuItemRow: View {
     let item: MenuItem
     let userAllergens: [String]
+    /// The app's estimate, when the restaurant has no allergen information of its own.
+    let estimate: DishAssessment?
     let filterActive: Bool
     let onReport: () -> Void
+    let onExplain: () -> Void
 
-    var isSafe: Bool {
-        !item.allergens.map { $0.name }.contains(where: { userAllergens.contains($0) })
+    private var info: DishAllergens {
+        DishAllergens(item: item, estimate: estimate)
     }
 
-    var shouldDim: Bool {
-        filterActive && !isSafe && !userAllergens.isEmpty
+    private var conflicts: [DishAllergens.Tag] {
+        info.conflicts(with: userAllergens)
+    }
+
+    private var showsVerdict: Bool {
+        filterActive && !userAllergens.isEmpty
+    }
+
+    private var shouldDim: Bool {
+        showsVerdict && !conflicts.isEmpty
     }
 
     var body: some View {
@@ -335,64 +391,50 @@ struct MenuItemRow: View {
                                 .foregroundStyle(Color.navy)
                         }
 
-                        if filterActive && !userAllergens.isEmpty {
-                            Image(systemName: isSafe ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                .foregroundStyle(isSafe ? .green : .red)
+                        if showsVerdict {
+                            verdictIcon
                                 .transition(.scale.combined(with: .opacity))
                         }
                     }
                 }
 
-                // Allergen tags + report button
+                // Allergen tags, then the explain and report buttons
                 HStack(alignment: .center) {
-                    if !item.allergens.isEmpty {
+                    if !info.tags.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 6) {
-                                ForEach(item.allergens) { allergen in
-                                    HStack(spacing: 4) {
-                                        if userAllergens.contains(allergen.name) {
-                                            Image(systemName: "exclamationmark")
-                                                .font(.system(size: 8, weight: .bold))
-                                        }
-                                        Text(allergen.name)
-                                            .font(.caption2)
-                                            .fontWeight(.semibold)
-                                    }
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(
-                                        userAllergens.contains(allergen.name) ?
-                                        Color.red.opacity(0.12) : Color(.tertiarySystemGroupedBackground)
-                                    )
-                                    .foregroundStyle(
-                                        userAllergens.contains(allergen.name) ?
-                                        Color.red : Color.secondary
-                                    )
-                                    .clipShape(Capsule())
-                                    .overlay(
-                                        Capsule()
-                                            .stroke(
-                                                userAllergens.contains(allergen.name) ?
-                                                Color.red.opacity(0.3) : Color.clear,
-                                                lineWidth: 1
-                                            )
+                                ForEach(info.tags, id: \.self) { tag in
+                                    AllergenChip(
+                                        text: tag.text,
+                                        isUserAllergen: userAllergens.contains(tag.allergen),
+                                        isEstimate: info.isEstimate
                                     )
                                 }
                             }
                         }
                     } else {
-                        Text("No allergens listed")
+                        Text(info.isEstimate ? "No allergens spotted in the description" : "No allergens listed by the restaurant")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
                     }
 
                     Spacer()
 
+                    if info.isEstimate {
+                        Button(action: onExplain) {
+                            Image(systemName: "info.circle")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                        }
+                        .accessibilityLabel("Why this estimate")
+                    }
+
                     Button(action: onReport) {
                         Image(systemName: "flag")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }
+                    .accessibilityLabel("Report a problem with this dish")
                 }
             }
             .padding(14)
@@ -400,7 +442,7 @@ struct MenuItemRow: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
 
-            // Dim overlay for unsafe items
+            // Dim overlay for dishes with the user's allergens
             if shouldDim {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(Color(.systemGroupedBackground).opacity(0.72))
@@ -409,24 +451,84 @@ struct MenuItemRow: View {
         }
         .animation(.easeInOut(duration: 0.25), value: filterActive)
     }
+
+    @ViewBuilder
+    private var verdictIcon: some View {
+        if !conflicts.isEmpty {
+            Image(systemName: "xmark.circle.fill")
+                .foregroundStyle(.red)
+        } else if info.isEstimate {
+            // No sign of the user's allergens in the wording isn't the same as safe.
+            Image(systemName: "questionmark.circle.fill")
+                .foregroundStyle(.orange)
+        } else {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+        }
+    }
+}
+
+// MARK: - Allergen Chip
+private struct AllergenChip: View {
+    let text: String
+    let isUserAllergen: Bool
+    /// Estimated allergens get a dashed outline.
+    let isEstimate: Bool
+
+    private var outline: Color {
+        if isUserAllergen { return Color.red.opacity(0.3) }
+        return isEstimate ? Color.secondary.opacity(0.35) : Color.clear
+    }
+
+    var body: some View {
+        HStack(spacing: 4) {
+            if isUserAllergen {
+                Image(systemName: "exclamationmark")
+                    .font(.system(size: 8, weight: .bold))
+            }
+            Text(text)
+                .font(.caption2)
+                .fontWeight(.semibold)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(isUserAllergen ? Color.red.opacity(0.12) : Color(.tertiarySystemGroupedBackground))
+        .foregroundStyle(isUserAllergen ? Color.red : Color.secondary)
+        .clipShape(Capsule())
+        .overlay(
+            Capsule()
+                .stroke(outline, style: StrokeStyle(lineWidth: 1, dash: isEstimate ? [3, 2] : []))
+        )
+    }
 }
 
 // MARK: - Filter Button
 struct FilterButton: View {
     @Binding var filterActive: Bool
     let userAllergens: [String]
-    /// Free on free-tier restaurants; on Pro restaurants it needs a subscription.
-    let isUnlocked: Bool
-    @State private var showPaywall = false
+    /// True when the menu's allergens are estimates rather than the restaurant's own.
+    let isEstimate: Bool
+
+    private var title: String {
+        if isEstimate {
+            return filterActive ? "Dimming likely allergens" : "Dim likely allergens"
+        }
+        return filterActive ? "Showing what you can eat" : "Show me what I can eat"
+    }
+
+    private var subtitle: String? {
+        if userAllergens.isEmpty { return "Add your allergies in Profile first" }
+        return isEstimate ? "Estimates only. Ask staff to confirm" : nil
+    }
+
+    private var activeColor: Color {
+        isEstimate ? .orange : .green
+    }
 
     var body: some View {
         Button {
-            if isUnlocked {
-                withAnimation(.spring(duration: 0.4)) {
-                    filterActive.toggle()
-                }
-            } else {
-                showPaywall = true
+            withAnimation(.spring(duration: 0.4)) {
+                filterActive.toggle()
             }
         } label: {
             HStack(spacing: 12) {
@@ -434,17 +536,17 @@ struct FilterButton: View {
                     Circle()
                         .fill(.white.opacity(0.2))
                         .frame(width: 34, height: 34)
-                    Image(systemName: isUnlocked ? (filterActive ? "eye.fill" : "eye.slash.fill") : "lock.fill")
+                    Image(systemName: filterActive ? "eye.fill" : "eye.slash.fill")
                         .font(.subheadline)
                         .foregroundStyle(.white)
                 }
 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(isUnlocked ? (filterActive ? "Showing what you can eat" : "Show me what I can eat") : "Show me what I can eat")
+                    Text(title)
                         .font(.headline)
                         .foregroundStyle(.white)
-                    if !isUnlocked {
-                        Text("Pro feature — tap to upgrade")
+                    if let subtitle {
+                        Text(subtitle)
                             .font(.caption)
                             .foregroundStyle(.white.opacity(0.8))
                     }
@@ -452,17 +554,8 @@ struct FilterButton: View {
 
                 Spacer()
 
-                if isUnlocked && filterActive {
+                if filterActive {
                     Text("ON")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(.white.opacity(0.25))
-                        .clipShape(Capsule())
-                } else if !isUnlocked {
-                    Text("PRO")
                         .font(.caption)
                         .fontWeight(.bold)
                         .foregroundStyle(.white)
@@ -476,8 +569,8 @@ struct FilterButton: View {
             .padding(.vertical, 14)
             .background(
                 LinearGradient(
-                    colors: isUnlocked && filterActive ?
-                        [Color.green, Color.green.opacity(0.85)] :
+                    colors: filterActive ?
+                        [activeColor, activeColor.opacity(0.85)] :
                         [Color.navy, Color.navy.opacity(0.85)],
                     startPoint: .leading,
                     endPoint: .trailing
@@ -485,15 +578,12 @@ struct FilterButton: View {
             )
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(
-                color: (isUnlocked && filterActive ? Color.green : Color.navy).opacity(0.4),
+                color: (filterActive ? activeColor : Color.navy).opacity(0.4),
                 radius: 12, y: 6
             )
         }
         .disabled(userAllergens.isEmpty)
         .opacity(userAllergens.isEmpty ? 0.5 : 1)
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
-        }
     }
 }
 

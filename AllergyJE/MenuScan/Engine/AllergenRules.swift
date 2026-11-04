@@ -1,15 +1,15 @@
 import Foundation
 
 /// One entry from the rules table: a menu term and what it implies.
-nonisolated struct AllergenRule: Hashable, Sendable {
+public nonisolated struct AllergenRule: Hashable, Sendable {
     /// The term as written in the table, used when explaining a prediction.
-    let term: String
+    public let term: String
     /// The term after `MenuText` normalisation, matched against menu text.
-    let tokens: [String]
+    public let tokens: [String]
     /// Allergens the term implies. Empty for food words that carry no allergen;
     /// those still mark text as food, and as longer matches they override shorter
     /// ones ("coconut milk" stops "milk" from flagging dairy).
-    let effects: [UKAllergen: AllergenLikelihood]
+    public let effects: [UKAllergen: AllergenLikelihood]
 }
 
 /// The knowledge base behind `AllergenPredictor`.
@@ -32,15 +32,48 @@ nonisolated struct AllergenRule: Hashable, Sendable {
 ///
 /// This is a cautious starting point. It is meant to be replaced or backed up by
 /// statistics learned from menus with verified allergen data.
-nonisolated enum AllergenRules {
-    static let standard: [AllergenRule] = parse(source).rules
+public nonisolated enum AllergenRules {
+    /// The rules the app uses: the hand-written table plus anything learned from real menus.
+    public static let standard: [AllergenRule] = merge(handWritten, learned: parse(LearnedAllergenRules.source).rules)
 
-    struct ParseResult: Sendable {
-        var rules: [AllergenRule] = []
-        var problems: [String] = []
+    /// The hand-written table in `source` alone.
+    public static let handWritten: [AllergenRule] = parse(source).rules
+
+    public struct ParseResult: Sendable {
+        public var rules: [AllergenRule] = []
+        public var problems: [String] = []
     }
 
-    static func parse(_ text: String) -> ParseResult {
+    /// Adds learned rules to the base rules. A learned rule can add allergens or raise a
+    /// likelihood, but never lower or remove one. Where a learned term spans words the base
+    /// rules already understand (e.g. "beef wellington"), it keeps their warnings too,
+    /// because the longer match replaces the shorter ones when a menu is read.
+    public static func merge(_ base: [AllergenRule], learned: [AllergenRule]) -> [AllergenRule] {
+        let basePredictor = AllergenPredictor(rules: base)
+        var rules = base
+        var indexByTokens = Dictionary(base.enumerated().map { ($1.tokens, $0) }, uniquingKeysWith: { first, _ in first })
+
+        func strongest(_ a: [UKAllergen: AllergenLikelihood], _ b: [UKAllergen: AllergenLikelihood]) -> [UKAllergen: AllergenLikelihood] {
+            a.merging(b) { max($0, $1) }
+        }
+
+        for rule in learned {
+            if let index = indexByTokens[rule.tokens] {
+                let existing = rules[index]
+                rules[index] = AllergenRule(term: existing.term, tokens: existing.tokens, effects: strongest(existing.effects, rule.effects))
+            } else {
+                var inherited: [UKAllergen: AllergenLikelihood] = [:]
+                for evidence in basePredictor.assess(rule.term).evidence {
+                    inherited[evidence.allergen] = evidence.likelihood
+                }
+                indexByTokens[rule.tokens] = rules.count
+                rules.append(AllergenRule(term: rule.term, tokens: rule.tokens, effects: strongest(inherited, rule.effects)))
+            }
+        }
+        return rules
+    }
+
+    public static func parse(_ text: String) -> ParseResult {
         var result = ParseResult()
         var firstDefinedOn: [[String]: Int] = [:]
         let allergensByKey = Dictionary(uniqueKeysWithValues: UKAllergen.allCases.map { ($0.ruleKey, $0) })
@@ -98,7 +131,7 @@ nonisolated enum AllergenRules {
         return result
     }
 
-    static let source = """
+    public static let source = """
     # ── Allergen names written on the menu itself ────────────────────────────────
     gluten: gluten!
     dairy, lactose, whey, casein: milk!

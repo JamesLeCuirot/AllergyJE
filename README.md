@@ -15,7 +15,9 @@ Predictions come from the wording of the menu. They can say a dish probably cont
 | `AllergyJE/MenuScan/` | Camera scanning (VisionKit DataScanner), photo OCR (Vision), the dimming overlay and the review screens. |
 | `AllergyJE/MenuScan/Engine/` | Plain-Swift engine with no UIKit: groups OCR lines into dishes (`MenuLayout`) and predicts allergens (`AllergenPredictor`, `AllergenRules`). |
 | `Tests/MenuEngineTests/` | Unit tests for the engine. |
-| `Package.swift` | Builds only the engine, so its tests run without Xcode. The app doesn't use it. |
+| `Tools/` | `allergy-tools`: scores the predictor against real menus and learns new rules (see below). Not part of the app. |
+| `Data/` | Dishes with known allergens, used for scoring and learning. |
+| `Package.swift` | Builds the engine and tools, so tests run without Xcode. The app doesn't use it. |
 
 ## Running the tests
 
@@ -33,6 +35,32 @@ This works on a Mac with Xcode 26, or on Linux with Swift 6.2.
 4. **Draw the overlay.** Everything is darkened except dishes with no evidence for the user's allergens. Tap any dish to see why.
 
 To teach it a new word, add a line to `AllergenRules.source` and a test.
+
+## Teaching the predictor from real menus
+
+Everything here is plain code that runs on your machine. There's no AI model or online service.
+
+`Data/` holds dishes whose allergens are known, as CSV files with one row per dish and one column per allergen. Allergen cells are `Y` (contains), `M` (may contain) or blank. A restaurant's own allergen chart saved as CSV usually works as it is: common column names like "Soya", "Tree nuts" and "Sulphites" are recognised.
+
+```bash
+swift run allergy-tools fetch-supabase --url <project url> --key <anon key>
+```
+Exports every dish in the app's database to `Data/allergy-je-database.csv`.
+
+```bash
+swift run allergy-tools score
+```
+For each allergen, shows how many dishes that contain it the predictor misses (the number that matters: the app would show those dishes bright), and how many it flags wrongly. It lists examples of both.
+
+```bash
+swift run allergy-tools learn --write
+```
+Finds words that reliably go with an allergen in the dishes the rules miss, and writes them to `LearnedAllergenRules.swift` for you to review in the diff. Learned rules can only add or strengthen warnings, never remove one. It also lists hand-written rules that the data disagrees with.
+
+```bash
+swift run allergy-tools score --write-baseline
+```
+Saves the current misses to `Data/baseline.json`. `swift test` fails if a later change misses more, or if the data changes without a new baseline.
 
 ## Backend
 

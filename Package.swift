@@ -28,5 +28,21 @@ let package = Package(
             dependencies: ["MenuEngine"],
             path: "Tests/MenuEngineTests"
         ),
+        // Scoring and rule learning against menus with known allergens. Not part of the app.
+        .target(
+            name: "MenuEngineTraining",
+            dependencies: ["MenuEngine"],
+            path: "Tools/Training"
+        ),
+        .executableTarget(
+            name: "allergy-tools",
+            dependencies: ["MenuEngine", "MenuEngineTraining"],
+            path: "Tools/allergy-tools"
+        ),
+        .testTarget(
+            name: "MenuEngineTrainingTests",
+            dependencies: ["MenuEngine", "MenuEngineTraining"],
+            path: "Tests/MenuEngineTrainingTests"
+        ),
     ]
 )

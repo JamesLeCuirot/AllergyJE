@@ -1,37 +1,37 @@
 import Foundation
 
 /// One allergen the predictor thinks a dish may contain, and why.
-nonisolated struct AllergenEvidence: Hashable, Sendable {
-    let allergen: UKAllergen
+public nonisolated struct AllergenEvidence: Hashable, Sendable {
+    public let allergen: UKAllergen
     /// The strongest likelihood among `terms`.
-    let likelihood: AllergenLikelihood
+    public let likelihood: AllergenLikelihood
     /// Menu terms that point to this allergen, strongest first ("pesto", "parmesan").
-    let terms: [String]
+    public let terms: [String]
 
     /// "Likely contains tree nuts (pesto)"
-    var summary: String {
+    public var summary: String {
         "\(likelihood.label) \(allergen.phrase) (\(terms.joined(separator: ", ")))"
     }
 }
 
 /// What the predictor read from one dish's text.
-nonisolated struct DishAssessment: Hashable, Sendable {
+public nonisolated struct DishAssessment: Hashable, Sendable {
     /// Allergens the dish may contain, strongest first, after the menu's own
     /// free-from claims have been applied.
-    let evidence: [AllergenEvidence]
+    public let evidence: [AllergenEvidence]
     /// Evidence set aside because the menu says the dish is free from that allergen
     /// ("gluten-free bread"). Shown to the user so they can judge the claim.
-    let overriddenByClaims: [AllergenEvidence]
+    public let overriddenByClaims: [AllergenEvidence]
     /// Allergens the menu says this dish is free from: "GF", "dairy free", "vegan".
-    let claimedFreeFrom: Set<UKAllergen>
+    public let claimedFreeFrom: Set<UKAllergen>
     /// Free-from versions the menu says can be requested ("GF option available").
     /// These don't change the prediction, because the dish as described still contains them.
-    let freeFromOnRequest: Set<UKAllergen>
+    public let freeFromOnRequest: Set<UKAllergen>
     /// True when the text contains at least one food word the rules know.
-    let recognisesFood: Bool
+    public let recognisesFood: Bool
 
     /// Evidence for the given allergens at or above `minimum`.
-    func concerns(for allergens: Set<UKAllergen>, minimum: AllergenLikelihood = .possible) -> [AllergenEvidence] {
+    public func concerns(for allergens: Set<UKAllergen>, minimum: AllergenLikelihood = .possible) -> [AllergenEvidence] {
         evidence.filter { allergens.contains($0.allergen) && $0.likelihood >= minimum }
     }
 }
@@ -42,13 +42,13 @@ nonisolated struct DishAssessment: Hashable, Sendable {
 /// carry which allergens. It can say a dish probably *contains* something; it can never
 /// prove a dish is *free* of something. Text it doesn't recognise produces no evidence,
 /// so "no evidence" means "ask the staff", not "safe".
-nonisolated struct AllergenPredictor: Sendable {
-    static let standard = AllergenPredictor(rules: AllergenRules.standard)
+public nonisolated struct AllergenPredictor: Sendable {
+    public static let standard = AllergenPredictor(rules: AllergenRules.standard)
 
     /// Rules grouped by their first token, longest first.
     private let rulesByFirstToken: [String: [AllergenRule]]
 
-    init(rules: [AllergenRule]) {
+    public init(rules: [AllergenRule]) {
         var index: [String: [AllergenRule]] = [:]
         for rule in rules {
             index[rule.tokens[0], default: []].append(rule)
@@ -56,7 +56,7 @@ nonisolated struct AllergenPredictor: Sendable {
         rulesByFirstToken = index.mapValues { $0.sorted { $0.tokens.count > $1.tokens.count } }
     }
 
-    func assess(_ text: String) -> DishAssessment {
+    public func assess(_ text: String) -> DishAssessment {
         let normalized = MenuText.normalize(text)
         let tokens = MenuText.tokens(normalized: normalized)
 
@@ -255,9 +255,9 @@ nonisolated enum FreeFromClaims {
 
 // MARK: - Text normalisation
 
-nonisolated enum MenuText {
+public nonisolated enum MenuText {
     /// Lower-cases, removes accents and apostrophes, and spells out "&" as "and".
-    static func normalize(_ text: String) -> String {
+    public static func normalize(_ text: String) -> String {
         var result = text
             .folding(options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive], locale: Locale(identifier: "en_GB"))
             .lowercased()
@@ -270,11 +270,11 @@ nonisolated enum MenuText {
         return result
     }
 
-    static func tokens(_ text: String) -> [String] {
+    public static func tokens(_ text: String) -> [String] {
         tokens(normalized: normalize(text))
     }
 
-    static func tokens(normalized: String) -> [String] {
+    public static func tokens(normalized: String) -> [String] {
         normalized
             .split(whereSeparator: { !($0.isLetter || $0.isNumber) })
             .map(String.init)

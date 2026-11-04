@@ -6,7 +6,7 @@ import Foundation
 ///
 /// Raw values match the strings the app already saves under the `guestAllergens`
 /// UserDefaults key, so a saved selection converts with `UKAllergen(rawValue:)`.
-nonisolated enum UKAllergen: String, CaseIterable, Codable, Hashable, Comparable, Sendable {
+public nonisolated enum UKAllergen: String, CaseIterable, Codable, Hashable, Comparable, Sendable {
     case gluten = "Gluten"
     case crustaceans = "Crustaceans"
     case eggs = "Eggs"
@@ -23,7 +23,7 @@ nonisolated enum UKAllergen: String, CaseIterable, Codable, Hashable, Comparable
     case molluscs = "Molluscs"
 
     /// The identifier used for this allergen in `AllergenRules.source`.
-    var ruleKey: String {
+    public var ruleKey: String {
         switch self {
         case .soybeans: "soy"
         case .sulphites: "sulphites"
@@ -32,7 +32,7 @@ nonisolated enum UKAllergen: String, CaseIterable, Codable, Hashable, Comparable
     }
 
     /// Lower-case name for use inside a sentence, e.g. "may contain tree nuts".
-    var phrase: String {
+    public var phrase: String {
         switch self {
         case .eggs: "egg"
         case .soybeans: "soya"
@@ -43,11 +43,11 @@ nonisolated enum UKAllergen: String, CaseIterable, Codable, Hashable, Comparable
     }
 
     /// Converts saved allergen names, ignoring any this version doesn't recognise.
-    static func set(from saved: [String]) -> Set<UKAllergen> {
+    public static func set(from saved: [String]) -> Set<UKAllergen> {
         Set(saved.compactMap(UKAllergen.init(rawValue:)))
     }
 
-    static func < (lhs: UKAllergen, rhs: UKAllergen) -> Bool {
+    public static func < (lhs: UKAllergen, rhs: UKAllergen) -> Bool {
         lhs.sortIndex < rhs.sortIndex
     }
 
@@ -57,7 +57,7 @@ nonisolated enum UKAllergen: String, CaseIterable, Codable, Hashable, Comparable
 }
 
 /// How strongly a menu term suggests that a dish contains an allergen.
-nonisolated enum AllergenLikelihood: Int, Comparable, Codable, Sendable {
+public nonisolated enum AllergenLikelihood: Int, Comparable, Codable, Sendable {
     /// Often included, depending on the kitchen. "curry" → mustard.
     case possible = 1
     /// The classic recipe includes it. "pesto" → nuts.
@@ -65,7 +65,7 @@ nonisolated enum AllergenLikelihood: Int, Comparable, Codable, Sendable {
     /// The named ingredient is, or is made from, the allergen. "prawns" → crustaceans.
     case contains = 3
 
-    init?(marker: Character) {
+    public init?(marker: Character) {
         switch marker {
         case "?": self = .possible
         case "~": self = .likely
@@ -75,7 +75,7 @@ nonisolated enum AllergenLikelihood: Int, Comparable, Codable, Sendable {
     }
 
     /// Sentence opener, e.g. "Likely contains" + " tree nuts".
-    var label: String {
+    public var label: String {
         switch self {
         case .possible: "May contain"
         case .likely: "Likely contains"
@@ -83,7 +83,7 @@ nonisolated enum AllergenLikelihood: Int, Comparable, Codable, Sendable {
         }
     }
 
-    static func < (lhs: AllergenLikelihood, rhs: AllergenLikelihood) -> Bool {
+    public static func < (lhs: AllergenLikelihood, rhs: AllergenLikelihood) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 }

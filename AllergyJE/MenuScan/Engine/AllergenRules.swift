@@ -188,6 +188,9 @@ public nonisolated enum AllergenRules {
     bao: gluten!, soy?, milk?
     pizza, calzone, stromboli: gluten!, milk~
     margherita: gluten~, milk!
+    capricciosa, diavola, diavolo, quattro stagioni, napoletana: gluten!, milk~
+    quattro formaggi, formaggi: milk!
+    caprese: milk~
     biscuit, cookie, wafer, cone: gluten!, milk?, eggs?
     shortbread: gluten!, milk!
     biscotti: gluten!, nuts~, eggs~
@@ -355,7 +358,7 @@ public nonisolated enum AllergenRules {
     macaron: nuts!, eggs!
     macaroon: eggs~, nuts?
     souffle: eggs!, milk~, gluten?
-    carbonara: eggs!, milk~
+    carbonara: eggs!, milk~, gluten~
     lemon curd: eggs!, milk~
     zabaglione: eggs!, sulphites~
     fondant: eggs~, milk~, gluten?

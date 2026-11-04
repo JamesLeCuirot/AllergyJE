@@ -176,6 +176,16 @@ struct SupabaseExportTests {
         #expect(dishes.first?.restaurant == "Beresford House")
     }
 
+    @Test func keepsOneCopyOfAMenuTwoBranchesShare() throws {
+        let json = Data("""
+        [{"name":"Margherita","description":null,"restaurants":{"name":"Chain Town"},"menu_item_allergens":[{"level":"contains","allergens":{"name":"Milk"}}]},
+         {"name":"Margherita","description":null,"restaurants":{"name":"Chain Beach"},"menu_item_allergens":[{"level":"contains","allergens":{"name":"Milk"}}]},
+         {"name":"Margherita","description":null,"restaurants":{"name":"Other Pizzeria"},"menu_item_allergens":[{"level":"contains","allergens":{"name":"Gluten"}}]}]
+        """.utf8)
+        let dishes = try SupabaseExport.dishes(fromJSON: json)
+        #expect(dishes.map(\.restaurant) == ["Chain Beach", "Other Pizzeria"])
+    }
+
     @Test func rejectsAllergenNamesItDoesntKnow() {
         let json = Data(#"[{"name":"Toast","description":null,"restaurants":{"name":"X"},"menu_item_allergens":[{"allergens":{"name":"Gluten-ish"}}]}]"#.utf8)
         #expect(throws: SupabaseExport.ExportError.self) { try SupabaseExport.dishes(fromJSON: json) }

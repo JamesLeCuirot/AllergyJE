@@ -16,31 +16,48 @@ public enum SupabaseExport {
 
     public static let source = "Allergy.je database"
 
+    /// PostgREST answers at most this many rows per request (Supabase's default `max-rows`).
+    static let pageSize = 1000
+
     public static func fetchDishes(projectURL: String, anonKey: String) async throws -> [LabelledDish] {
-        guard var components = URLComponents(string: projectURL.trimmingCharacters(in: CharacterSet(charactersIn: "/")) + "/rest/v1/menu_items") else {
+        guard let endpoint = URL(string: projectURL.trimmingCharacters(in: CharacterSet(charactersIn: "/")) + "/rest/v1/menu_items") else {
             throw ExportError(description: "'\(projectURL)' isn't a valid URL")
         }
-        components.queryItems = [
-            URLQueryItem(name: "select", value: "name,description,restaurants!inner(name),menu_item_allergens(level,allergens(name))"),
-            URLQueryItem(name: "is_available", value: "eq.true"),
-        ]
-        guard let url = components.url else { throw ExportError(description: "couldn't build the request URL") }
+        // Page through in a fixed order: a single request silently stops at the row limit.
+        var rows: [Row] = []
+        while true {
+            var components = URLComponents(url: endpoint, resolvingAgainstBaseURL: false)!
+            components.queryItems = [
+                URLQueryItem(name: "select", value: "name,description,restaurants!inner(name),menu_item_allergens(level,allergens(name))"),
+                URLQueryItem(name: "is_available", value: "eq.true"),
+                URLQueryItem(name: "order", value: "id"),
+                URLQueryItem(name: "limit", value: String(pageSize)),
+                URLQueryItem(name: "offset", value: String(rows.count)),
+            ]
+            guard let url = components.url else { throw ExportError(description: "couldn't build the request URL") }
 
-        var request = URLRequest(url: url)
-        request.setValue(anonKey, forHTTPHeaderField: "apikey")
-        request.setValue("Bearer \(anonKey)", forHTTPHeaderField: "Authorization")
+            var request = URLRequest(url: url)
+            request.setValue(anonKey, forHTTPHeaderField: "apikey")
+            request.setValue("Bearer \(anonKey)", forHTTPHeaderField: "Authorization")
 
-        let (data, response) = try await load(request)
-        guard let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status) else {
-            let body = String(decoding: data.prefix(500), as: UTF8.self)
-            throw ExportError(description: "Supabase returned \((response as? HTTPURLResponse)?.statusCode ?? 0): \(body)")
+            let (data, response) = try await load(request)
+            guard let status = (response as? HTTPURLResponse)?.statusCode, (200..<300).contains(status) else {
+                let body = String(decoding: data.prefix(500), as: UTF8.self)
+                throw ExportError(description: "Supabase returned \((response as? HTTPURLResponse)?.statusCode ?? 0): \(body)")
+            }
+            let page = try JSONDecoder().decode([Row].self, from: data)
+            rows += page
+            if page.count < pageSize { break }
         }
-        return try dishes(fromJSON: data)
+        return try dishes(from: rows)
     }
 
     /// Converts the REST response (menu items with embedded restaurant and allergen names).
     public static func dishes(fromJSON data: Data) throws -> [LabelledDish] {
-        let rows = try JSONDecoder().decode([Row].self, from: data)
+        try dishes(from: JSONDecoder().decode([Row].self, from: data))
+    }
+
+    private static func dishes(from rows: [Row]) throws -> [LabelledDish] {
         var unknown = Set<String>()
         let dishes = rows.map { row in
             var labels: [UKAllergen: AllergenLabel] = [:]
@@ -65,7 +82,27 @@ public enum SupabaseExport {
             throw ExportError(description: "unrecognised allergen names in the database: \(unknown.sorted().joined(separator: ", "))")
         }
         // Stable order, so re-exporting only shows real changes in a diff.
-        return dishes.sorted { ($0.restaurant, $0.dish, $0.description) < ($1.restaurant, $1.dish, $1.description) }
+        return collapsingSharedMenus(dishes).sorted { ($0.restaurant, $0.dish, $0.description) < ($1.restaurant, $1.dish, $1.description) }
+    }
+
+    /// Keeps one copy of a menu that several restaurants share (a chain's branches).
+    ///
+    /// Two branches with the same dishes and allergens are one data point, not two.
+    /// Counting them twice would skew the scorecard, and would let the learner treat one
+    /// kitchen as "seen at two restaurants". The first restaurant by name is kept.
+    public static func collapsingSharedMenus(_ dishes: [LabelledDish]) -> [LabelledDish] {
+        let byRestaurant = Dictionary(grouping: dishes, by: \.restaurant)
+        var seen = Set<[String]>()
+        var kept: [LabelledDish] = []
+        for name in byRestaurant.keys.sorted() {
+            let menu = byRestaurant[name]!
+            let fingerprint = menu.map { dish in
+                let labels = dish.labels.map { "\($0.key.rawValue)=\($0.value)" }.sorted().joined(separator: ",")
+                return [dish.dish, dish.description, labels].joined(separator: "\u{1}")
+            }.sorted()
+            if seen.insert(fingerprint).inserted { kept += menu }
+        }
+        return kept
     }
 
     private struct Row: Decodable {

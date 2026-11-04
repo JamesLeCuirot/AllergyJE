@@ -1,0 +1,19 @@
+{
+  "dishes" : 36,
+  "missed" : {
+    "Celery" : 0,
+    "Crustaceans" : 0,
+    "Eggs" : 0,
+    "Fish" : 0,
+    "Gluten" : 0,
+    "Lupin" : 0,
+    "Milk" : 0,
+    "Molluscs" : 0,
+    "Mustard" : 0,
+    "Nuts" : 0,
+    "Peanuts" : 0,
+    "Sesame" : 0,
+    "Soybeans" : 0,
+    "Sulphur Dioxide" : 0
+  }
+}

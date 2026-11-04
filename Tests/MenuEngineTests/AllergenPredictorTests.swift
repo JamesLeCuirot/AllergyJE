@@ -147,6 +147,15 @@ struct PredictionTests {
         #expect(likelihood(.mustard, in: "Wholegrain mustard seeds") == .contains)
     }
 
+    @Test func dishesTheAppDatabaseShowedWereMissing() {
+        // Found by `allergy-tools score` against the restaurant data in Supabase.
+        #expect(likelihood(.gluten, in: "Lobster thermidor") == .likely)
+        #expect(likelihood(.gluten, in: "Passion fruit souffle") == .possible)
+        #expect(likelihood(.gluten, in: "Classic prawn cocktail") == .possible)
+        #expect(likelihood(.eggs, in: "Jersey beef burger") == .possible)
+        #expect(likelihood(.milk, in: "Cauliflower puree") == .possible)
+    }
+
     @Test func jerseySpecialities() {
         #expect(likelihood(.gluten, in: "Jersey Wonders") == .contains)
         #expect(likelihood(.molluscs, in: "Pan-fried ormers") == .contains)

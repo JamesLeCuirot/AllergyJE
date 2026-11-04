@@ -240,19 +240,19 @@ public nonisolated enum AllergenRules {
     christmas pudding: gluten~, eggs~, sulphites~, nuts?
     sticky toffee: gluten~, eggs~, milk~
     full english, full breakfast: gluten~, eggs~, sulphites~, mustard?
-    burger, hamburger: gluten~, sesame?, sulphites?, mustard?
-    cheeseburger: gluten~, milk!, sesame?, sulphites?, mustard?
+    burger, hamburger: gluten~, sesame?, sulphites?, mustard?, eggs?
+    cheeseburger: gluten~, milk!, sesame?, sulphites?, mustard?, eggs?
     hot dog: gluten~, sulphites~, mustard~
 
     # ── Crustaceans ───────────────────────────────────────────────────────────────
     prawn, shrimp, crab, lobster, langoustine, crayfish, krill, chancre, belacan: crustaceans!
     scampi: crustaceans!, gluten~
-    prawn cocktail: crustaceans!, eggs!, mustard?
+    prawn cocktail: crustaceans!, eggs!, mustard?, gluten?
     marie rose: eggs!, mustard?
     prawn cracker: crustaceans!, gluten?
     prawn toast: crustaceans!, gluten!, sesame~
     bisque: crustaceans~, milk~, celery?, sulphites?
-    thermidor: crustaceans~, milk!, mustard~, eggs?
+    thermidor: crustaceans~, milk!, mustard~, gluten~, eggs?
     surf and turf: crustaceans~
     paella: crustaceans~, molluscs~, fish?, celery?
     jambalaya, gumbo: crustaceans~, celery~, gluten?
@@ -352,7 +352,7 @@ public nonisolated enum AllergenRules {
     eton mess: eggs!, milk!
     macaron: nuts!, eggs!
     macaroon: eggs~, nuts?
-    souffle: eggs!, milk~
+    souffle: eggs!, milk~, gluten?
     carbonara: eggs!, milk~
     lemon curd: eggs!, milk~
     zabaglione: eggs!, sulphites~
@@ -386,6 +386,7 @@ public nonisolated enum AllergenRules {
     diane: milk~, mustard~
     peppercorn sauce: milk~, sulphites?
     beurre blanc: milk!, sulphites~
+    puree: milk?
     posset, syllabub: milk!, sulphites?
     horseradish: milk?, mustard?
 

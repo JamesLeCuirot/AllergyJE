@@ -1,0 +1,66 @@
+name: Build
+
+# Builds the iOS app for the Simulator (no signing) and runs the engine's unit tests,
+# so compile errors show up on every push without opening Xcode.
+
+on:
+  push:
+    paths:
+      - "**.swift"
+      - "**/project.pbxproj"
+      - "**/Package.resolved"
+      - ".github/workflows/build.yml"
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  engine-tests:
+    name: Engine tests (Linux)
+    runs-on: ubuntu-latest
+    container: swift:6.2
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test
+
+  ios-build:
+    name: iOS app build
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app | grep -iv beta | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
+
+      - name: List schemes
+        run: xcodebuild -list -project AllergyJE.xcodeproj
+
+      - name: Build for the iOS Simulator
+        run: |
+          set +e
+          xcodebuild build \
+            -project AllergyJE.xcodeproj \
+            -scheme AllergyJE \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO \
+            > build.log 2>&1
+          status=$?
+          echo "::group::Full build log (last 300 lines)"
+          tail -300 build.log
+          echo "::endgroup::"
+          echo "── Errors and warnings in app code ──"
+          grep -E "(error|warning): " build.log | grep "/AllergyJE/AllergyJE/" | sort -u | head -150
+          grep -E "\*\* BUILD (SUCCEEDED|FAILED)" build.log
+          exit $status

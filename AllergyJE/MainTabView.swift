@@ -11,7 +11,13 @@ struct MainTabView: View {
                     Label("Home", systemImage: "house.fill")
                 }
                 .tag(0)
-            
+
+            MenuScanView()
+                .tabItem {
+                    Label("Scan", systemImage: "camera.viewfinder")
+                }
+                .tag(2)
+
             ProfileView(showEditAllergies: $showEditAllergies)
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")

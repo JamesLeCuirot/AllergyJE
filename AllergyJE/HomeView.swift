@@ -24,6 +24,13 @@ struct HomeView: View {
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(duration: 0.5).delay(0.1), value: appeared)
 
+                    ScanMenuCard {
+                        selectedTab = 2
+                    }
+                    .offset(y: appeared ? 0 : 30)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.spring(duration: 0.5).delay(0.15), value: appeared)
+
                     RestaurantDetectionCard(
                         locationManager: locationManager,
                         restaurantStore: restaurantStore,
@@ -151,6 +158,51 @@ struct AllergenSummaryCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
         .padding(.horizontal, 16)
+    }
+}
+
+// MARK: - Scan Menu Card
+struct ScanMenuCard: View {
+    let onScan: () -> Void
+
+    var body: some View {
+        Button(action: onScan) {
+            HStack(spacing: 14) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.white.opacity(0.15))
+                        .frame(width: 48, height: 48)
+                    Image(systemName: "camera.viewfinder")
+                        .font(.title2)
+                        .foregroundStyle(.white)
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Scan any menu")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                    Text("Point your camera at a menu and we'll dim the dishes that look risky for you")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.85))
+                        .multilineTextAlignment(.leading)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.7))
+            }
+            .padding(18)
+            .background(
+                LinearGradient(
+                    colors: [Color.navy, Color.navy.opacity(0.85)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 18))
+            .shadow(color: Color.navy.opacity(0.3), radius: 10, y: 4)
+            .padding(.horizontal, 16)
+        }
+        .buttonStyle(.plain)
     }
 }
 

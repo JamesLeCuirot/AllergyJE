@@ -6,7 +6,20 @@ import VisionKit
 final class LiveScanModel {
     /// Boxes are in the scanner view's coordinates (points).
     private(set) var dishes: [ScannedDish] = []
+    /// Set when the camera stops working mid-session, e.g. another app took it.
+    private(set) var isUnavailable = false
     @ObservationIgnored weak var scanner: DataScannerViewController?
+
+    /// Clears the last session's boxes so they aren't drawn over the next one.
+    func reset() {
+        dishes = []
+        isUnavailable = false
+    }
+
+    func markUnavailable() {
+        dishes = []
+        isUnavailable = true
+    }
 
     func update(from items: [RecognizedItem]) {
         var lines: [RecognizedLine] = []
@@ -54,8 +67,12 @@ struct LiveMenuScanner: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ scanner: DataScannerViewController, context: Context) {
-        if !scanner.isScanning {
-            try? scanner.startScanning()
+        guard !scanner.isScanning else { return }
+        do {
+            try scanner.startScanning()
+        } catch {
+            // Don't change observed state during a view update.
+            Task { model.markUnavailable() }
         }
     }
 
@@ -84,6 +101,10 @@ struct LiveMenuScanner: UIViewControllerRepresentable {
 
         func dataScanner(_ dataScanner: DataScannerViewController, didRemove removedItems: [RecognizedItem], allItems: [RecognizedItem]) {
             model.update(from: allItems)
+        }
+
+        func dataScanner(_ dataScanner: DataScannerViewController, becameUnavailableWithError error: DataScannerViewController.ScanningUnavailable) {
+            model.markUnavailable()
         }
     }
 }

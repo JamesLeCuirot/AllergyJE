@@ -80,13 +80,16 @@ struct MenuLayoutTests {
         #expect(blocks.map(\.text) == ["Fish Pie – cod, prawns, mash"])
     }
 
-    @Test func worksInNormalisedImageCoordinates() {
+    @Test func worksAtPhotoPixelScale() {
+        // A 3000 px wide photo: 60 px text, the description indented under the name.
         let blocks = MenuLayout.blocks(from: [
-            RecognizedLine(text: "Fish Pie", box: CGRect(x: 0.1, y: 0.10, width: 0.2, height: 0.02)),
-            RecognizedLine(text: "Cod, prawns, mash", box: CGRect(x: 0.1, y: 0.125, width: 0.4, height: 0.02)),
-            RecognizedLine(text: "Steak", box: CGRect(x: 0.1, y: 0.18, width: 0.15, height: 0.02)),
+            RecognizedLine(text: "Fish Pie", box: CGRect(x: 300, y: 400, width: 480, height: 60)),
+            RecognizedLine(text: "Cod, prawns, mash", box: CGRect(x: 340, y: 478, width: 1100, height: 60)),
+            RecognizedLine(text: "£14", box: CGRect(x: 2400, y: 400, width: 160, height: 60)),
+            RecognizedLine(text: "Steak", box: CGRect(x: 300, y: 640, width: 330, height: 60)),
         ])
         #expect(blocks.map(\.text) == ["Fish Pie Cod, prawns, mash", "Steak"])
+        #expect(blocks[0].hasPrice)
     }
 
     @Test func recognisesPrices() {

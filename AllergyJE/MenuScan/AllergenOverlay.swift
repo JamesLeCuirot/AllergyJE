@@ -40,12 +40,15 @@ struct AllergenOverlay: View {
         ZStack(alignment: .topLeading) {
             Canvas { context, size in
                 guard shouldShade else { return }
-                var shade = Path(CGRect(origin: .zero, size: size))
-                for item in items where item.isClear {
-                    shade.addRoundedRect(in: item.rect, cornerSize: CGSize(width: 6, height: 6))
+                // Shade everything, then punch the clear dishes out of the shade. Unlike an
+                // even-odd fill, this keeps overlapping holes clear too.
+                context.drawLayer { layer in
+                    layer.fill(Path(CGRect(origin: .zero, size: size)), with: .color(.black.opacity(0.7)))
+                    layer.blendMode = .destinationOut
+                    for item in items where item.isClear {
+                        layer.fill(Path(roundedRect: item.rect, cornerRadius: 6), with: .color(.black))
+                    }
                 }
-                // Even-odd fill leaves the clear dishes as holes in the shade.
-                context.fill(shade, with: .color(.black.opacity(0.7)), style: FillStyle(eoFill: true))
 
                 for item in items where item.isClear || !item.concerns.isEmpty {
                     let outline = Path(roundedRect: item.rect, cornerRadius: 6)
@@ -78,6 +81,7 @@ struct AllergenOverlay: View {
                         .accessibilityElement()
                         .accessibilityLabel(item.dish.text)
                         .accessibilityAddTraits(.isButton)
+                        .accessibilityAction { onSelect(item.dish) }
                 }
             }
         }

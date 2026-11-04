@@ -6,8 +6,9 @@ import Foundation
 /// A line of text read from a menu by OCR.
 nonisolated struct RecognizedLine: Equatable, Sendable {
     var text: String
-    /// Where the line is. Any coordinate space works (normalised image coordinates or
-    /// on-screen points) as long as y grows downwards and all lines share it.
+    /// Where the line is, in a space where y grows downwards and x and y share one scale,
+    /// such as image pixels or on-screen points. Not normalised 0–1 image coordinates:
+    /// layout compares horizontal distances with line heights, which needs the same scale.
     var box: CGRect
 }
 

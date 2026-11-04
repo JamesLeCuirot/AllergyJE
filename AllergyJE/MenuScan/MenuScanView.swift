@@ -6,7 +6,8 @@ import VisionKit
 extension UKAllergen {
     /// The allergens the user picked during onboarding or in Profile.
     static var saved: Set<UKAllergen> {
-        set(from: UserDefaults.standard.stringArray(forKey: "guestAllergens") ?? [])
+        // `Self.` is required: a bare `set(` here would parse as a property setter.
+        Self.set(from: UserDefaults.standard.stringArray(forKey: "guestAllergens") ?? [])
     }
 }
 
@@ -57,7 +58,10 @@ struct MenuScanView: View {
                 isVisible = true
                 allergens = UKAllergen.saved
             }
-            .onDisappear { isVisible = false }
+            .onDisappear {
+                isVisible = false
+                model.reset()
+            }
             .onReceive(NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)) { _ in
                 allergens = UKAllergen.saved
             }
@@ -77,6 +81,12 @@ struct MenuScanView: View {
         switch cameraState {
         case .checking:
             ProgressView().tint(.white)
+        case .ready where model.isUnavailable:
+            CameraMessage(
+                icon: "camera.metering.unknown",
+                title: "The camera stopped",
+                message: "Another app may be using it. Come back to this tab to try again, or choose a photo."
+            )
         case .ready:
             // Only keep the camera running while this screen is on show.
             if isVisible && reviewing == nil {
@@ -114,7 +124,8 @@ struct MenuScanView: View {
         case .authorized:
             cameraState = DataScannerViewController.isAvailable ? .ready : .unavailable
         case .notDetermined:
-            cameraState = await AVCaptureDevice.requestAccess(for: .video) ? .ready : .denied
+            let granted = await AVCaptureDevice.requestAccess(for: .video)
+            cameraState = !granted ? .denied : (DataScannerViewController.isAvailable ? .ready : .unavailable)
         default:
             cameraState = .denied
         }
@@ -142,7 +153,7 @@ struct MenuScanView: View {
         if allergens.isEmpty {
             return "Add your allergies in Profile so we know what to look for"
         }
-        guard cameraState == .ready else {
+        guard canCapture else {
             return "Choose a photo of a menu to check it"
         }
         let dishes = model.dishes.filter(\.isDish)
@@ -164,7 +175,7 @@ struct MenuScanView: View {
             }
             .accessibilityLabel("Choose a photo of a menu")
 
-            if cameraState == .ready {
+            if canCapture {
                 Button {
                     Task { await captureFromCamera() }
                 } label: {
@@ -177,11 +188,18 @@ struct MenuScanView: View {
                 .disabled(isProcessing)
             }
 
-            Color.clear.frame(width: 56, height: 56)
+            if canCapture {
+                // Balances the photo button so the shutter sits in the middle.
+                Color.clear.frame(width: 56, height: 56)
+            }
         }
         .padding(.vertical, 14)
         .frame(maxWidth: .infinity)
         .background(.black.opacity(0.65))
+    }
+
+    private var canCapture: Bool {
+        cameraState == .ready && !model.isUnavailable
     }
 
     private var processingOverlay: some View {

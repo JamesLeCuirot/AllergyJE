@@ -294,7 +294,9 @@ def main():
         writer = csv.writer(f)
         writer.writerow(["category", "dish", "description", "price"] + ALLERGENS)
         for d in dishes:
-            writer.writerow([d["category"], d["dish"], "", ""] + [d["labels"].get(a, "") for a in ALLERGENS])
+            # The guide lists the dips among its single ingredients; file them as a menu section.
+            category = "DIPS" if d["category"] == "INGREDIENTS" else d["category"]
+            writer.writerow([category, d["dish"], "", ""] + [d["labels"].get(a, "") for a in ALLERGENS])
 
     for d in dishes:
         contains = [a for a in ALLERGENS if d["labels"].get(a) == "Y"]

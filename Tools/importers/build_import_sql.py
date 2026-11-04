@@ -4,7 +4,8 @@
 Inputs:
   Imports/restaurants.csv     one row per restaurant (slug, name, address, phone, website,
                               menu_url, allergen_info_url, allergen_info_date, latitude,
-                              longitude, free_tier)
+                              longitude, free_tier, menu). "menu" names a shared menu file
+                              for chain branches; blank means menus/<slug>.csv.
   Imports/menus/<slug>.csv    category, dish, description, price, then one column per
                               allergen: Y = contains, M = may contain, blank = doesn't
   Imports/held/<slug>.csv     dishes to leave out (from `allergy-tools review --write`):
@@ -137,14 +138,16 @@ def main():
     for r in restaurants:
         if args.only and r["slug"] not in args.only:
             continue
-        path = os.path.join(args.imports, "menus", f"{r['slug']}.csv")
+        # Branches of a chain can share one menu file: the optional "menu" column names it.
+        menu = (r.get("menu") or "").strip() or r["slug"]
+        path = os.path.join(args.imports, "menus", f"{menu}.csv")
         if not os.path.exists(path):
             problems.append(f"{r['slug']}: no menu file at {path}")
             continue
         with open(path, newline="", encoding="utf-8") as f:
             dishes = list(csv.DictReader(f))
         # Dishes `allergy-tools review` held back: the restaurant's data contradicts the menu wording.
-        held_path = os.path.join(args.imports, "held", f"{r['slug']}.csv")
+        held_path = os.path.join(args.imports, "held", f"{menu}.csv")
         held = set()
         if os.path.exists(held_path):
             with open(held_path, newline="", encoding="utf-8") as f:

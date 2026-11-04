@@ -6,8 +6,13 @@ between requests, as its usage policy asks. Rows that already have coordinates a
 alone. Check anything surprising: the result is printed for every row it fills.
 
 Usage:
-  python3 Tools/importers/geocode.py [Imports/restaurants.csv]
+  python3 Tools/importers/geocode.py [--only slug …] [--file Imports/restaurants.csv]
+
+Without --only it looks up every row still missing coordinates. If Nominatim answers
+"too many requests", it stops and saves what it has; run it again later.
 """
+import argparse
+import urllib.error
 import csv
 import json
 import sys
@@ -29,14 +34,26 @@ def lookup(query):
 
 
 def main():
-    path = sys.argv[1] if len(sys.argv) > 1 else "Imports/restaurants.csv"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--only", nargs="*")
+    parser.add_argument("--file", default="Imports/restaurants.csv")
+    args = parser.parse_args()
+    path = args.file
     with open(path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         fields, rows = reader.fieldnames, list(reader)
     for row in rows:
         if row["latitude"].strip() and row["longitude"].strip():
             continue
-        found = lookup(f"{row['name']}, {row['address']}") or lookup(row["address"])
+        if args.only and row["slug"] not in args.only:
+            continue
+        try:
+            found = lookup(f"{row['name']}, {row['address']}") or lookup(row["address"])
+        except urllib.error.HTTPError as error:
+            if error.code == 429:
+                print("Nominatim is rate-limiting; saved what was found so far. Try again later.")
+                break
+            raise
         if found:
             row["latitude"], row["longitude"] = found["lat"], found["lon"]
             print(f"{row['slug']}: {found['lat']}, {found['lon']}  ({found['display_name'][:90]})")

@@ -1,0 +1,68 @@
+category,dish,description,price,price_text,flags
+Set Menu,Starter - Prawn cocktail,"Chilled prawns, Marie Rose sauce, lettuce, lemon",,,DF NGCI
+Set Menu,Starter - Roast beetroot & pickled pear salad,"Green lentil, local sundried tomatoes, pecorino, pine kernels, mint",,,VV DF NGCI
+Set Menu,Main - Flat iron steak,"Brown butter & tarragon hollandaise, chips",,,NGCI
+Set Menu,Main - Roast-pepper fettuccelle,"Roast Jersey pepper, courgette, red pesto, parmesan, basil",,,VC
+Set Menu,Pudding - Banana sticky toffee pudding,"Butterscotch, house Jersey vanilla ice cream",,,V NGCI
+Set Menu,Pudding - Fresh fruit,"Mango sorbet, passion fruit sauce",,,VV DF NGCI
+To share,House sourdough,"Olive oil, balsamic vinegar",4.5,4.5,VV DF
+To share,Gordal olives,,5,5,VV DF NGCI
+To share,Spicy corn,,3,3,VV DF NGCI
+Jersey rock oysters,Jersey rock oysters,Cabernet sauvignon and shallot vinegar (Three / Six / Nine),,9 / 17 / 24,DF NGCI
+Jersey rock oysters,Kenney-Herbert oysters,"Grilled with Henderson’s Relish, bacon, tomato and Gruyère (Three / Six / Nine)",,11 / 21 / 30,NGCI
+Jersey rock oysters,Champagne butter sauce oysters,Poached (Three / Six / Nine),,12 / 23 / 32,NGCI
+Starters,Roast beetroot & pickled pear salad,"Green lentil, local sundried tomatoes, pecorino, pine kernels, mint",12,12,VV DF NGCI
+Starters,Wild mushroom arancini,"Fresh sage, truffle aioli",13,13,V
+Starters,"Grilled gambas, starter","Chilli & lime butter, toasted sourdough",12.5,12.5,
+Starters,Scottish smoked salmon,"Capers, lemon, horseradish cream, Guinness bread",15,15,
+Starters,Hummus,"Carrots, radishes, crispy fava beans (contains seasame)",10,10,VV DF NGCI
+Starters,Chicken & duck liver parfait,"Grape chutney, cornichon, sourdough toast",13.5,13.5,
+Starters,Crottin goat’s cheese,"Olive tapenade, Jersey tomato",14,14,V NGCI
+Starters,Jersey crab,"Jersey-crab hummus, apple, pickled fennel, radish, sourdough",16,16,DF PC
+Starters,Prawn cocktail,"Chilled prawns, Marie Rose sauce, lettuce, lemon",14,14,DF NGCI
+Starters,"Crispy crumbed cod bites, starter",Tartare sauce,13,13,DF
+Starters,"Hand-dived Jersey scallops, starter","Sherry-vinegar butter, smoked bacon, crushed peas, pickled lemons",15,15,NGCI
+Starters,"Roast-pepper fettuccelle, starter","Roast Jersey pepper, courgette, red pesto, parmesan, basil",10,10,VC
+Starters,"Fettuccelle carbonara, starter","Pancetta, egg yolk, parmesan",10,10,
+Starters,"Beef tartare, starter","Soy-cured Jersey egg yolk, sourdough toast",16,16,DF
+Mains,Salmon fillet,"Seaweed, cucumber, & potato sauce, served with trout caviar",25,25,NGCI
+Mains,Lemon sole,"Served two ways - grilled & crumbed - mash, spinach, peas, & hot tartare sauce",32.5,32.5,
+Mains,Chicken Caesar schnitzel,"Half-gem Caesar, parmesan snow, croutons, anchovy dressing (Add fried egg +1.5)",22.5,22.5,
+Mains,Flat iron steak,"Brown butter & tarragon hollandaise, chips",25,25,NGCI
+Mains,Navarin of lamb,"Slow-cooked lamb, potatoes, carrots, seasonal vegetables",26,26,DF NGCI
+Mains,Grilled chicken,"Creamy mash, roast carrots, pancetta, sage, Madeira sauce",25,25,NGCI
+Mains,House Goan king prawn curry,"Chickpeas, courgette, baby spinach, coriander, rice, poppadums",24,24,DF NGCI
+Mains,Omelette aux fines herbes,Served with chips & leaf salad (Add Ogleshield cheese +3),12,12,V NGCI
+Mains,Cheeseburger,"Homemade sourdough bun, pickled red onion, Ogleshield cheese, burger sauce, pickles, chips",18.5,18.5,
+Mains,Chef's salad,"Beetroot, olives, lentils, pickled fennel, Jersey tomato, avocado, pumpkin seeds",14,14,VV DF NGCI
+Mains,House Goan tofu curry,"Chickpeas, spinach, Indian pickle, oven-baked rice",20,20,VV DF NGCI
+Mains,Grilled gambas,"Chilli & lime butter, toasted sourdough",25,25,
+Mains,Crispy crumbed cod bites,"Tartare sauce, chips, mushy peas",19,19,
+Mains,Hand-dived Jersey scallops,"Sherry-vinegar butter, smoked bacon, crushed peas, pickled lemons",30,30,NGCI
+Mains,Roast-pepper fettuccelle,"Roast Jersey pepper, courgette, red pesto, parmesan, basil",20,20,VC
+Mains,Fettuccelle carbonara,"Pancetta, egg yolk, parmesan",20,20,
+Mains,Beef tartare,"Soy-cured Jersey egg yolk, sourdough toast, served with chips",29,29,DF
+Grills,Sirloin of beef,"250g / 400g; served with roast tomato, roast mushroom, chips, and a sauce of your choice",,36 / 48,DF NGCI
+Grills,Fillet of beef,"200g / 400g; served with roast tomato, roast mushroom, chips, and a sauce of your choice",,40 / 75,DF NGCI
+Grills,Beef tomahawk,"900-1000g, serves 2-3; served with roast tomato, roast mushroom, chips, and a sauce of your choice",85,85,DF NGCI
+Grills,Steak sauces,"Brown butter & tarragon hollandaise, Pepper sauce, Red wine gravy, Salsa verde",,2.75 each,
+Grills,Grilled fish,"Please ask for fish of the day, locally-caught where possible; served with green beans Tenderstem broccoli, with a brown butter & tarragon hollandaise",37,37,NGCI
+Specials,Jersey Pork Chop,"faggot croqutte, white bean purée, local cabbage, Jersey apple sauce",22.5,22.5,
+Specials,Local Fish Pie,"made with Jersey fish, smoked fish, local eggs, Jersey cream and herbs",19.5,19.5,
+Specials,Jersey Beef Bourguignon,"Local potato mash, roasted shallots, carrots, bacon, Jersey mushrooms, red wine",22.5,22.5,NGCI
+Sides,House chips,,6,6,VV DF NGCI
+Sides,Truffle-chip poutine,"Truffle, parmesan, truffle mayo",8,8,V NGCI
+Sides,Buttered Jazzy potatoes / Jersey Royals,Jersey Royals when in season,6,6,V NGCI
+Sides,Jersey-butter mash,,6,6,V NGCI
+Sides,Jersey-butter carrots,,6,6,V NGCI
+Sides,"Peas, bacon, & onions",,6,6,NGCI
+Sides,Green beans & Tenderstem broccoli,,6,6,V NGCI
+Sides,Lettuce & fennel salad,Jersey tomatoes,6,6,VV DF NGCI
+Puddings,Banana sticky toffee pudding,"Butterscotch, house Jersey vanilla ice cream",11,11,V NGCI
+Puddings,Fresh fruit,"Mango sorbet, passion fruit sauce",11,11,VV DF NGCI
+Puddings,Tiramisu parfait,House Jersey chocolate ice cream,11,11,V
+Puddings,Baked Alaska coupe,"Vanilla sponge, house tonka bean ice cream, spiced plums, orange, granola, merengue",11,11,V
+Puddings,Orange crème brûlée,"Sauternes sultanas, lemon shortbread",11,11,V
+Puddings,Cheese,"Tête de moine, Barkham blue, Quicke’s cheddar, rye crackers, quince jelly",14,14,
+Puddings,Café Gourmand,"Tiramisu parfait, house chocolate ice cream, lemon shortbread, espresso",11,11,V
+Puddings,Ice creams & sorbets,"Vanilla, Chocolate, or Caramelised white chocolate ice cream; Mango, Strawberry, or Lemon sorbet; served with white chocolate and cherry biscotti",,3.5 per scoop,

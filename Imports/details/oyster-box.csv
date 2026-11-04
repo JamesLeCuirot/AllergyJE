@@ -1,0 +1,58 @@
+category,dish,description,price,price_text,flags
+Bread & Appetisers,Guinness bread,Jersey butter,3.75,3.75,V
+Bread & Appetisers,Gordal olives,,5.75,5.75,VV DF NGCI
+Bread & Appetisers,Tomato & thyme focaccia,"balsamic vinegar, olive oil",4.95,4.95,V DF
+Bread & Appetisers,Giant spicy corn,,2.85,2.85,VV DF NGCI
+Jersey Rock Oysters,Shallot vinegar,served on ice,,3 for 9 / 6 for 17 / 9 for 24,DF NGCI
+Jersey Rock Oysters,Champagne butter sauce,poached,,3 for 12 / 6 for 23 / 9 for 32,NGCI
+Jersey Rock Oysters,Kenney-Herbert,"grilled with Worcestershire sauce, bacon, tomato and Gruyère",,3 for 11 / 6 for 21 / 9 for 30,NGCI
+Jersey Rock Oysters,Chilli & ginger,"pickled ginger, lime juice, coriander, served on ice",,3 for 10 / 6 for 19 / 9 for 27,DF NGCI
+Jersey Rock Oysters,Mixed oyster plate,"two natural oysters with shallot vinegar, two poached oysters with champagne butter, two grilled Kenney-Herbert oysters, two chilli & ginger oysters",27,27,NGCI
+First courses,"Chicory, pear and blue cheese salad","roast pumpkin, pine kernels, citrus dressing",12.5,12.5,V VC NGCI
+First courses,Sprouts Farm pumpkin soup,"basil oil, crème fraîche",11,11,V NGCI
+First courses,Tempura of local octopus,"samphire and prawn, roast Jersey pepper and pumpkin seed romesco sauce",14.5,14.5,DF NGCI
+First courses,Capucinni,"prawns, Jersey crab and smoked salmon bound with shredded lettuce and Marie Rose sauce",16,16,DF NGCI PC
+First courses,"Crab, avocado & pink grapefruit salad",preserved lemon and avocado mayonnaise,19,19,DF NGCI PC
+First courses,Wild mushrooms,"homemade focaccia toast, roast pepper and aubergine ajvar, thyme and garlic dressing",12.5,12.5,VV DF
+First courses,Jersey fish soup,"served with saffron rouille, croutons and Gruyère cheese",14,14,
+First courses,Whipped goat’s cheese,"chicory and pickled fennel salad, pumpkin seeds",13,13,V NGCI
+First courses,Grilled leeks with aioli,truffle and parmesan,12.5,12.5,NGCI
+First courses,Beef carpaccio,"truffle mayonnaise, capers, Parmigiano Reggiano, lemon, parsley",21,21,NGCI
+First courses,Jersey crab cake,"Pommery mustard sauce, pickled lemon and radish salad",16,16,PC
+First courses,"Pork, prune & duck terrine","grape chutney, toasted brioche",14,14,
+First courses,Crab tagliolini,"homemade pasta, picked crab, chilli, garlic, butter sauce, lemon",19,19,PC
+First courses,Hand-dived Jersey scallops,"grilled and served in the shell, with a local cider, basil, and parsley sauce, samphire, mussels",,,
+Fish & Shellfish,Fish of the Day,"today’s choice of fresh, sustainably-sourced fish (local where possible), served with a choice of seasonal salad or green beans and broccoli; and a choice of sauce vierge or lemon butter",,Market price,DF NGCI
+Fish & Shellfish,Hand-dived Jersey scallops,"grilled and served in the shell, with a local cider, basil, and parsley sauce, samphire, mussels",34,34,NGCI
+Fish & Shellfish,Seafood tagliolini,"homemade pasta, hand-dived Jersey scallops, picked crab, squid, mussels, butter sauce, fennel, lemon",37,37,PC
+Fish & Shellfish,Locally-caught grilled octopus,"dukkah, hummus, Moroccan chermoula, coriander",32,32,DF NGCI
+Fish & Shellfish,Fish pie,"smoked haddock, cod, salmon and prawns with eggs, parsley and cream, cheesy potato topping and Tenderstem broccoli",19.5,19.5,
+Fish & Shellfish,Crab tagliolini,"homemade pasta, picked crab, chilli, butter sauce, lemon",36,36,PC
+Fish & Shellfish,Roast cod and king prawn curry,"lime, ginger, coconut, fragrant rice",32,32,DF NGCI
+Meat,"Irish sirloin of beef, 240g","served with garden peas, bacon, onions, mushrooms, and a red wine gravy",34,34,NGCI
+Meat,"Irish fillet of beef, 220g","served with garden peas, bacon, onions, mushrooms, and a red wine gravy",39.5,39.5,NGCI
+Meat,New York Strip,"500g beef loin, roast vegetables, roast red onions, mushrooms, chips to share, with choice of sauce (serves 2)",70,70,DF NGCI
+Meat,Steak sauces,"Garlic herb butter, peppercorn or blue cheese",3,3,NGCI
+Meat,Grilled chicken,"roast shallots, smoked pancetta, roast carrots, creamy mash and Madeira sauce",28,28,NGCI
+Meat,Slow-cooked pork belly and pork fillet,"pancetta, white bean purée, crispy Jersey kale, grain mustard sauce",25,25,NGCI
+Meat,Rump of lamb,"onion and celeriac purée, Flemish-style peas and carrots, sherry, tarragon",26.5,26.5,NGCI
+"Vegan, Vegetarian & Salad",Warm pearl barley risotto,"roasted local Lion’s Mane mushroom, chickpeas, Jerusalem artichoke, crispy kale",19.5,19.5,V VC
+"Vegan, Vegetarian & Salad",Seasonal salad,"butternut squash, Tenderstem broccoli, avocado, watercress, apple, pea shoots, radish, crispy shallots, roast pumpkin seeds (add Tête de Moine cheese, grilled chicken, or king prawns)",17,17,VV DF NGCI
+"Vegan, Vegetarian & Salad",Local pumpkin and mascarpone tortellini,"brown sage butter, capers, pine kernels, pecorino",21,21,V
+"Vegan, Vegetarian & Salad",Thai cauliflower,"green curry, fragrant rice, Thai sambal, mango",21,21,VV DF NGCI
+Sides,Jersey carrots,"star anise, olive oil",6,6,VV DF NGCI
+Sides,New potatoes / Jersey Royals,"butter, parsley, scallions",,6 / 7,V NGCI
+Sides,Chips,,6,6,VV DF NGCI
+Sides,Truffle chips,parmesan-style cheese,7,7,V NGCI
+Sides,Creamy mashed potatoes,,6,6,V NGCI
+Sides,Green beans & Tenderstem broccoli,,6,6,V VC NGCI
+Sides,Seasonal salad,"little gem, butternut, apple, radish, avocado, crispy shallots, Tenderstem broccoli, pumpkin seeds",7,7,V NGCI
+Puddings,Catalan crème brûlée,"infused with orange and Cointreau, served with a ginger and Jersey butter biscuit",11.5,11.5,V NGCI
+Puddings,Treacle tart,"Jersey crème fraîche, spiced plums",11.5,11.5,V
+Puddings,Chocolate fondant,"salted caramel, house tonka bean ice cream",11.5,11.5,V
+Puddings,Coffee pannacotta,"chocolate ice cream, brownie crumble",11.5,11.5,VV DF NGCI
+Puddings,Coconut malabi,apple and pear sorbet,11.5,11.5,VV DF NGCI
+Puddings,Apple tarte tatin,served with homemade vanilla ice cream (serves 2),16,16,V
+Puddings,Café Gourmand,"single espresso served with chocolate cherry brownie, vanilla ice cream, white chocolate and cherry biscotti, and toasted lime marshmallow",11,11,
+Puddings,Homemade ice creams and sorbets,served with white chocolate and cherry biscotti,,3.75 per scoop,V
+Puddings,Tête de Moine and Cashel blue cheeses,"quince jam, pear, oat biscuits or focaccia",14.5,14.5,

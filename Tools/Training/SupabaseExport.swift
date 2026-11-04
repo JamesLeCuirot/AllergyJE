@@ -7,7 +7,8 @@ import MenuEngine
 /// Reads the app's restaurant menus from Supabase as labelled dishes.
 ///
 /// Uses the public REST API with the anon key, so it sees exactly what the app sees:
-/// active restaurants and available dishes.
+/// active restaurants and available dishes. Hidden (menu-only) restaurants are left out,
+/// because their dishes have no allergen data and would look allergen-free.
 public enum SupabaseExport {
     public struct ExportError: Error, CustomStringConvertible {
         public let description: String
@@ -20,7 +21,7 @@ public enum SupabaseExport {
             throw ExportError(description: "'\(projectURL)' isn't a valid URL")
         }
         components.queryItems = [
-            URLQueryItem(name: "select", value: "name,description,restaurants(name),menu_item_allergens(allergens(name))"),
+            URLQueryItem(name: "select", value: "name,description,restaurants!inner(name),menu_item_allergens(level,allergens(name))"),
             URLQueryItem(name: "is_available", value: "eq.true"),
         ]
         guard let url = components.url else { throw ExportError(description: "couldn't build the request URL") }
@@ -46,7 +47,8 @@ public enum SupabaseExport {
             for link in row.menu_item_allergens ?? [] {
                 guard let name = link.allergens?.name else { continue }
                 if let allergen = UKAllergen(rawValue: name) {
-                    labels[allergen] = .contains
+                    let label: AllergenLabel = link.level == "may_contain" ? .mayContain : .contains
+                    if labels[allergen] != .contains { labels[allergen] = label }
                 } else {
                     unknown.insert(name)
                 }
@@ -68,7 +70,10 @@ public enum SupabaseExport {
 
     private struct Row: Decodable {
         struct Named: Decodable { let name: String }
-        struct Link: Decodable { let allergens: Named? }
+        struct Link: Decodable {
+            let level: String?
+            let allergens: Named?
+        }
         let name: String
         let description: String?
         let restaurants: Named?

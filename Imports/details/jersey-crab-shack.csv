@@ -1,0 +1,56 @@
+category,dish,description,price,price_text,flags
+While you decide,Garlic flatbread,Tasty Turkish-style flatbread topped with garlic butter. Great to share.,4.25,4.25,V
+While you decide,Cheesy garlic flatbread,Tasty Turkish-style garlic flatbread topped with melting mozzarella.,4.50,4.50,V
+While you decide,Pulled pork flatbread,Tasty Turkish-style garlic flatbread stuffed with lightly-spiced pulled pork & mozzarella.,5.95,5.95,
+While you decide,Baguette,Crusty white baguette with Jersey butter,3.5,3.5,V
+While you decide,Gordal olives,"Fat, juicy & succulent",4.95,4.95,VV DF NGCI
+While you decide,Honey & mustard roast sausages,The perfect little nibble,4.95,4.95,DF
+Jersey Rock Oysters,Jersey Rock Oysters,"A must-try Jersey experience. Local, from the Royal Bay of Grouville, freshly shucked. Served the natural way: on ice with homemade shallot vinegar.",,3 for 8.25 / 6 for 14.5,DF NGCI
+Small Plates,Jersey crab poutine,"Chips topped with picked crab, garlic yoghurt, spring onion and a hint of chilli",,Market price,NGCI PC
+Small Plates,Jersey crab linguine,"Picked Jersey crab, garlic, olive oil, lemon and a hint of chilli",,Market price,DF NGCI
+Small Plates,Crispy prawn fritters,"Vegetable-battered crispy king prawns, lemon and soy dip, carrot and ginger salad",12.5,12.5,DF NGCI
+Small Plates,Chipotle BBQ pork tacos,"Pulled pork, sour cream, pickled red onion and BBQ dressing on a mini soft taco",9.75,9.75,
+Small Plates,Shack poutine,"Chips topped with garlic yoghurt, spring onion and a hint of chilli",7.5,7.5,V NGCI
+Small Plates,Sticky cauliflower wings,"Buffalo cauliflower wings, BBQ mayo, hint of chilli",8.95,8.95,VV DF NGCI
+Small Plates,Maryland chicken bites,"Celery salt & mild cayenne pepper spiced chicken, lemon & herb mayo",9.5,9.5,DF NGCI
+Small Plates,Chilli fried squid,"Spiced squid, hints of chilli and coriander, sweet & sour dip",11.5,11.5,DF NGCI
+Small Plates,King prawn summer roll,"Handmade summer rolls, kimchi, lime, chilli & soy dip",10.95,10.95,DF NGCI
+Big Plates,Jersey whole crab,"Discover the joy of picking your own crab. Comes cracked and ready, with avocado, radish and edamame salad, lemon & mayo.",,Market price,DF NGCI PC
+Big Plates,Jersey crab linguine,"Picked Jersey crab, garlic, olive oil, lemon and a hint of chilli",,Market price,DF PC
+Big Plates,Fish & chips,"A seaside classic. Beer-battered fish, chips, peas, lemon and tartar sauce.",,19.95 (big fish) / 17.75 (little fish),DF NGCI
+Big Plates,Crispy chicken schnitzel,"Tender golden-crumbed chicken breast, lemon caper butter, hispi slaw, chips",19.95,19.95,
+Big Plates,Fish tacos,"Soft and California-style. Crumbed fish, pico de gallo, spicy mayo, avocado, red onions, red peppers, gem lettuce, lime inside a soft tortilla.",21.95,21.95,DF
+Big Plates,Beach burger,"The king of beachside burgers, fully loaded with crispy bacon, tomato, gherkin, Red Leicester cheese, red onions, salad, and burger sauce, all between a fluffy brioche bun. With chips.",19.95,19.95,
+Big Plates,South Indian fish curry,"Fish, coconut, butternut squash, chick peas, Tenderstem broccoli, chilli, ginger and coriander, served with fragrant rice.",21.95,21.95,DF NGCI
+Big Plates,South Indian chicken curry,"Chicken, coconut, butternut squash, chick peas, Tenderstem broccoli, chilli, ginger and coriander, served with fragrant rice.",19.95,19.95,DF NGCI
+Big Plates,Beetroot Buddha bowl,"A vibrant burst of colour and flavour. Beetroot hummus, roast beetroot, cucumber, radish, edamame beans, avocado, pea shoots, butternut squash, pumpkin seed and pomegranate dressing. Add optional toppings including fried egg, chicken, prawns or crab.",16.75,16.75,VV DF NGCI
+Big Plates,Shack sharer,"Can't decide? Get a taste of the Shack’s best. Chilli fried squid, crispy prawn fritters, chicken schnitzel strips, king prawn summer roll, hispi slaw, and a side of garlic flatbread.",,38.75 (for two),
+Sandos,The Crispy Fish,"Crispy crumbed fish, tartar sauce, pickled red onion, cucumber and lettuce",19.95,19.95,
+Sandos,The Chilli Chicken,"Grilled chicken breast, Calabrian hot honey sauce, tomato, lettuce and a drizzle of mayo",18.5,18.5,
+Sandos,The Fancy Falafel,"Fried falafel, roast pepper tapenade, tomato and lettuce with a drizzle of mayo",,,V VC
+Under £15,Beach Bowl,"Sticky rice, kimchi, white radish, hispi slaw, edamame, pickled ginger, soy roast mushrooms, cucumber, carrot, courgette, chilli, seasame, topped with a fried egg. Add optional additional toppings including butternut squash, chicken, prawns, or crab.",14.75,14.75,V DF NGCI
+Under £15,South Indian butternut curry,"Coconut, butternut squash, chick peas, Tenderstem broccoli, chilli, ginger and coriander, served with fragrant rice. Add optional chicken or fish.",14.75,14.75,VV DF NGCI
+Under £10,Burst tomato aglio e olio,"Locally-grown tomatoes, garlic, and olive oil swirled into linguine pasta with a hint of chilli. Add extra optional toppings including truffle and cheese, chicken or prawns.",9.95,9.95,VV DF
+Under £10,Shack-style vegetable pho,"Vietnamese-inspired veggie and rice noodle broth, bean sprouts, bok choy, soy mushrooms, chilli, lime and fresh herbs. Add optional toppings including butternut squash, chicken, or prawns.",9.95,9.95,VV DF NGCI
+Sides,Chip bowl,"Skin-on, crunchy-on-the-outside, fluffy-in-the-middle, potato fries",4.95,4.95,VV DF NGCI
+Sides,XL Chip bowl,"Just like our regular chip bowl, but bigger. Three times the regular portion to feed the biggest appetites or to share as a table. Yummy.",6.75,6.75,VV DF NGCI
+Sides,New potatoes / Jersey Royals,"Beautiful spuds. Jersey Royals when in season. Served with Jersey butter (or without, if you prefer - please ask).",,4.5 / 5.95,V VC NGCI
+Sides,Maryland chips,"Our tasty chips, dusted with celery salt, spices & cayenne pepper. Quite the upgrade.",5.5,5.5,VV DF NGCI
+Sides,Sweet potato chips,Tasty fried chunks of sweet potato.,5.95,5.95,VV DF NGCI
+Sides,Truffle chips,with truffle oil and Parmesan-style cheese,6.75,6.75,V NGCI
+Sides,Garden salad,"Fresh lettuce, tomato, cucumber, radish, pomegranate, house dressing",5.95,5.95,VV DF NGCI
+Sides,Seasonal greens,,5.95,5.95,VV DF NGCI
+Sides,Spicy sambal,Add a chilli kick with our signature sambal. Can you handle the heat?,2.75,2.75,VV DF NGCI
+Sides,Shack curry sauce,"homemade and perfect for dipping chips, potatoes, or anything else (we don't judge)",2.75,2.75,VV DF NGCI
+Sides,Shack lemon & garlic mayo,"Homemade, and perfect for dipping chips, potatoes, or anything else (we don't judge)",2.75,2.75,V DF NGCI
+Sides,Hispi slaw,"cabbage, herbs, green onion and black pepper",4.5,4.5,V DF NGCI
+Puds,Beach bucket sundae,"Evoke the childhood joy of a bucket & spade and a seaside ice cream. Great to share and packed with Jersey Dairy vanilla and chocolate ice cream, whipped cream, homemade brownie, chocolate and toffee sauce, all topped off with rainbow sprinkles (serves 2)",14.75,14.75,V NGCI
+Puds,Choccy campfire sundae,"Gather round the campfire and settle in for a treat. Toasted marshmallows, Jersey Dairy vanilla ice cream, homemade brownie pieces, salted caramel, choccy sauce and honeycomb all come together for the perfect summer's evening treat.",9.95,9.95,V NGCI
+Puds,Banoffee sundae,"The classic combo. Jersey Dairy vanilla ice cream, sliced banana, homemade toffee sponge pieces, whipped cream with a generous dollop of toffee sauce.",8.95,8.95,V
+Puds,Strawberry & white chocolate trifle,"A perfect blend of a trifle and a strawberry cheesecake! Fresh strawberries and Jersey whipped cream, layered with white chocolate cheesecake, shortbread crumbs and strawberry compote. An indulgent taste of summer.",10.5,10.5,V NGCI
+Puds,Chocolate brownie,"Rich and chocolatey brownie, served warm with chocolate sauce.",8.75,8.75,V NGCI
+Puds,Sticky toffee pudding,A favourite that never gets old. Homemade toffee sponge in hot toffee sauce.,8.75,8.75,V NGCI
+Puds,Jersey ice cream,"Jersey Dairy ice cream. Choose from the classics: vanilla, chocolate, or strawberry.",,2.50 per scoop,V NGCI
+Puds,Passion fruit & mango sorbet,with a raspberry jam sauce,6.75,6.75,VV DF NGCI
+Puds,Café delicio,"Pastel de nata custard tart, Jersey Dairy vanilla ice cream, chocolate sauce and a shot of espresso. A tasty little treat.",6.25,6.25,V
+Puds,Crèpe Suzette,"We're not sure who Suzette was, but she had great taste! Discover her namesake: freshly-made crèpe with orange caramel sauce. Citrussy and delicious.",6.25,6.25,V NGCI

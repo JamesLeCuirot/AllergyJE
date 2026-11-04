@@ -1,0 +1,27 @@
+category,dish,description,price,price_text,flags
+Bar snacks,Gordal olives,,5,5,VV DF NGCI
+Bar snacks,House sourdough,"Olive oil, balsamic vinegar",4.5,4.5,VV DF
+Bar snacks,Wild mushroom arancini,"Fresh sage, truffle aioli",13,13,V
+Bar snacks,"Crispy crumbed cod bites, small plate",Tartare sauce,13,13,DF
+Bar snacks,Hummus,"Carrots, radishes, crispy fava beans (contains seasame)",10,10,VV DF NGCI
+Bar snacks,Jersey rock oysters,Cabernet sauvignon and shallot vinegar (Three / Six / Nine),,9 / 17 / 24,DF NGCI
+Small plates,Korean chicken wings,Sriracha butter,9,9,DF NGCI
+Small plates,"Roast-pepper fettuccelle, small plate","Roast Jersey pepper, courgette, red pesto, parmesan, basil",10,10,VC
+Small plates,"Fettuccelle carbonara, small plate","Pancetta, egg yolk, parmesan",10,10,
+Small plates,"Grilled gambas, small plate","Chilli & lime butter, toasted sourdough",12.5,12.5,
+Small plates,Prawn cocktail,"Chilled prawns, Marie Rose sauce, lettuce, lemon",14,14,DF NGCI
+Large plates,Cheeseburger,"Homemade sourdough bun, pickled red onion, Ogleshield cheese, burger sauce, pickles, chips",18.5,18.5,
+Large plates,Flat iron steak,"Brown butter & tarragon hollandaise, chips",25,25,NGCI
+Large plates,Omelette aux fines herbes,Served with chips & leaf salad (Add Ogleshield cheese +3),12,12,V NGCI
+Large plates,Crispy crumbed cod bites,"Tartare sauce, chips, mushy peas",19,19,
+Large plates,Roast-pepper fettuccelle,"Roast Jersey pepper, courgette, red pesto, parmesan, basil",20,20,VC
+Large plates,Fettuccelle carbonara,"Pancetta, egg yolk, parmesan",20,20,
+Large plates,Chicken Caesar schnitzel,"Half-gem Caesar, parmesan snow, croutons, anchovy dressing (Add fried egg +1.5)",22.5,22.5,
+Large plates,Chef's salad,"Beetroot, olives, lentils, pickled fennel, Jersey tomato, avocado, pumpkin seeds",14,14,VV DF NGCI
+Large plates,House Goan king prawn curry,"Chickpeas, courgette, baby spinach, coriander, rice, poppadums",24,24,DF NGCI
+Large plates,House Goan chicken curry,"Chickpeas, spinach, Indian pickle, oven-baked rice",22,22,DF NGCI
+Large plates,House Goan tofu curry,"Chickpeas, spinach, Indian pickle, oven-baked rice",20,20,VV DF NGCI
+Sides,House chips,,6,6,VV DF NGCI
+Sides,Truffle-chip poutine,"Truffle, parmesan, truffle mayo",8,8,V NGCI
+Sides,Buttered Jazzy potatoes / Jersey Royals,Jersey Royals when in season,6,6,V NGCI
+Sides,"Peas, bacon, & onions",,6,6,NGCI

@@ -144,6 +144,26 @@ struct RuleLearnerTests {
     }
 }
 
+@Suite("Supabase export")
+struct SupabaseExportTests {
+    @Test func readsContainsAndMayContain() throws {
+        let json = Data("""
+        [{"name":"House sourdough","description":"Olive oil","restaurants":{"name":"Beresford House"},
+          "menu_item_allergens":[{"level":"contains","allergens":{"name":"Gluten"}},
+                                 {"level":"may_contain","allergens":{"name":"Soybeans"}},
+                                 {"allergens":{"name":"Sulphur Dioxide"}}]}]
+        """.utf8)
+        let dishes = try SupabaseExport.dishes(fromJSON: json)
+        #expect(dishes.first?.labels == [.gluten: .contains, .soybeans: .mayContain, .sulphites: .contains])
+        #expect(dishes.first?.restaurant == "Beresford House")
+    }
+
+    @Test func rejectsAllergenNamesItDoesntKnow() {
+        let json = Data(#"[{"name":"Toast","description":null,"restaurants":{"name":"X"},"menu_item_allergens":[{"allergens":{"name":"Gluten-ish"}}]}]"#.utf8)
+        #expect(throws: SupabaseExport.ExportError.self) { try SupabaseExport.dishes(fromJSON: json) }
+    }
+}
+
 @Suite("Real menu data")
 struct RealDataTests {
     private static let root = URL(fileURLWithPath: #filePath)

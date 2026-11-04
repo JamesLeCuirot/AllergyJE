@@ -21,6 +21,7 @@ different portion sizes) are left out for the same reason.
 | --- | --- | --- | --- |
 | Beresford House | [Allergen menu PDF](https://media-service.tpagency.com/media/jpr/2026/08/07fd10a6-e7db-4ac2-b852-b76c05ea7727.pdf), linked from https://beresford-house.com/allergens | 12 August 2026 | `08f704dc0634f0b76e43edcc2030ac195334c3dec91ad7c095f332cc4441d9b7` |
 | The Moorings Hotel & Restaurant | [Allergen matrix PDF](https://www.themooringshotel.com/wp-content/uploads/2026/10/Allergen-Matrix-151026.pdf), linked from https://www.themooringshotel.com/restaurant/ | 15 October 2026 | `65832684c6b87eda638ab3fd7d8636f993dd925c5877559b8ee87b2257912be4` |
+| Café Ubé (Jersey Airport, airside and landside) | [Allergen chart PDF](https://media-service.tpagency.com/media/jpr/2026/10/6b0df503-ac87-40fc-ae7d-0de2cefec20a.pdf), linked from https://jprestaurants.com/cafe-ube/ | 26 October 2026 | read by `Tools/importers/venues/cafe-ube.py` |
 | Oyster Box, Jersey Crab Shack, and 24 more | None published. Menu only, hidden; see `menu_url` in `restaurants.csv` | | |
 
 Source PDFs and pages are downloaded into `sources/` (not committed). Re-download them to rebuild.
@@ -50,6 +51,11 @@ A dish whose name or description shows an allergen for certain that the restaura
 doesn't list (e.g. "Tempura king prawns" with no crustaceans) is held back. It isn't loaded
 until the restaurant confirms. `build_import_sql.py` leaves out everything in `held/`. To
 release a dish, fix the chart data (or confirm it with the restaurant) and remove its line.
+
+Released after review (the review flagged these, but the chart is right):
+- Café Ubé: the oat-milk cappuccino, flat white and latte. They're flagged only because
+  "latte" etc. normally mean dairy. The chart lists milk deliberately on the oat-milk
+  mocha (its chocolate) and not on these, and the café notes "may contain" separately.
 
 Restaurants loaded hidden don't need coordinates yet. Fill them in, by hand or with
 `python3 Tools/importers/geocode.py`, when a restaurant goes live.

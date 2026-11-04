@@ -16,7 +16,10 @@ reach the app looking allergen-free. Re-running replaces each restaurant's menu,
 its slug. Leave free_tier blank to keep the current setting (new restaurants start as Pro).
 
 Usage:
-  python3 Tools/importers/build_import_sql.py [--only slug …] > import.sql
+  python3 Tools/importers/build_import_sql.py [--only slug …] [--new] > import.sql
+
+--new writes insert-only SQL for restaurants that aren't in the database yet: nothing is
+deleted or updated, and it fails without changing anything if a slug already exists.
 Then run the SQL against the database (e.g. in the Supabase SQL editor).
 """
 import argparse
@@ -44,7 +47,7 @@ def number(value):
     return value
 
 
-def restaurant_sql(r, dishes, problems):
+def restaurant_sql(r, dishes, problems, new_only=False):
     slug = r["slug"]
     live = bool(r["allergen_info_url"].strip())
     rid = f"(select id from restaurants where import_slug = {q(slug)})"
@@ -75,11 +78,15 @@ def restaurant_sql(r, dishes, problems):
         updates += ", is_free_tier = excluded.is_free_tier"
 
     out = [f"-- {r['name']} ({'live: allergen data from the restaurant' if live else 'hidden: menu only, no allergen data'})"]
-    out.append(f"insert into restaurants ({cols}) values ({vals})\n  on conflict (import_slug) do update set {updates}, updated_at = now();")
-    out.append(f"update menu_reports set menu_item_id = null where menu_item_id in (select id from menu_items where restaurant_id = {rid});")
-    out.append(f"delete from menu_item_allergens where menu_item_id in (select id from menu_items where restaurant_id = {rid});")
-    out.append(f"delete from menu_items where restaurant_id = {rid};")
-    out.append(f"delete from menu_categories where restaurant_id = {rid};")
+    if new_only:
+        # Fails on the unique import_slug if the restaurant is already there.
+        out.append(f"insert into restaurants ({cols}) values ({vals});")
+    else:
+        out.append(f"insert into restaurants ({cols}) values ({vals})\n  on conflict (import_slug) do update set {updates}, updated_at = now();")
+        out.append(f"update menu_reports set menu_item_id = null where menu_item_id in (select id from menu_items where restaurant_id = {rid});")
+        out.append(f"delete from menu_item_allergens where menu_item_id in (select id from menu_items where restaurant_id = {rid});")
+        out.append(f"delete from menu_items where restaurant_id = {rid};")
+        out.append(f"delete from menu_categories where restaurant_id = {rid};")
 
     categories = list(dict.fromkeys(d["category"] or "Menu" for d in dishes))
     if categories:
@@ -121,6 +128,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--imports", default="Imports")
     parser.add_argument("--only", nargs="*", help="slugs to include (default: all)")
+    parser.add_argument("--new", action="store_true", help="insert-only SQL for restaurants not yet in the database")
     args = parser.parse_args()
 
     problems, parts, summary = [], [], []
@@ -144,7 +152,7 @@ def main():
             before = len(dishes)
             dishes = [d for d in dishes if (d["category"], d["dish"]) not in held]
             summary.append(f"-- {r['slug']}: held back {before - len(dishes)} dishes listed in {held_path}")
-        sql, n_dishes, n_links, live = restaurant_sql(r, dishes, problems)
+        sql, n_dishes, n_links, live = restaurant_sql(r, dishes, problems, new_only=args.new)
         parts.append(sql)
         summary.append(f"-- {r['slug']}: {n_dishes} dishes, {n_links} allergen links, {'live' if live else 'hidden'}")
 

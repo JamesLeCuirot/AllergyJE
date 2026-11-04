@@ -41,10 +41,14 @@ public struct RuleDisagreement: Equatable, Sendable {
 public struct RuleLearner: Sendable {
     /// Dishes that must mention the term and contain the allergen before it's proposed.
     public var minimumSupport: Int
+    /// Different restaurants those dishes must come from, so one kitchen's house recipes
+    /// (or its name, or a typo on its menu) don't become rules for every menu.
+    public var minimumRestaurants: Int
     public var maxWords: Int
 
-    public init(minimumSupport: Int = 3, maxWords: Int = 3) {
+    public init(minimumSupport: Int = 3, minimumRestaurants: Int = 2, maxWords: Int = 3) {
         self.minimumSupport = minimumSupport
+        self.minimumRestaurants = minimumRestaurants
         self.maxWords = maxWords
     }
 
@@ -67,9 +71,14 @@ public struct RuleLearner: Sendable {
         for allergen in UKAllergen.allCases {
             var containing: [String: Int] = [:]
             var notContaining: [String: Int] = [:]
+            var restaurants: [String: Set<String>] = [:]
             for (index, dish) in dishes.enumerated() {
                 switch dish.labels[allergen] {
-                case .contains: for gram in grams[index] { containing[gram, default: 0] += 1 }
+                case .contains:
+                    for gram in grams[index] {
+                        containing[gram, default: 0] += 1
+                        restaurants[gram, default: []].insert(dish.restaurant)
+                    }
                 case nil: for gram in grams[index] { notContaining[gram, default: 0] += 1 }
                 case .mayContain: break
                 }
@@ -80,7 +89,7 @@ public struct RuleLearner: Sendable {
                 var best: (gram: String, bound: Double, fixes: Int)?
                 for gram in Set(missed.flatMap { grams[$0] }).sorted() {
                     let yes = containing[gram] ?? 0
-                    guard yes >= minimumSupport else { continue }
+                    guard yes >= minimumSupport, (restaurants[gram]?.count ?? 0) >= minimumRestaurants else { continue }
                     let bound = Self.wilsonLowerBound(yes, of: yes + (notContaining[gram] ?? 0))
                     guard bound >= Self.thresholds.last!.1 else { continue }
                     let fixes = missed.filter { grams[$0].contains(gram) }.count

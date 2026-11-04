@@ -13,6 +13,7 @@ Commands:
   learn    Propose rules that catch dishes the hand-written rules miss.
              --data <folder or file>   CSV dataset (default: Data)
              --min-support <n>         dishes a term must appear in with the allergen (default: 3)
+             --min-restaurants <n>     different restaurants those dishes must come from (default: 2)
              --write                   regenerate AllergyJE/MenuScan/Engine/LearnedAllergenRules.swift
   check    Read the dataset and report any problems.
              --data <folder or file>   CSV dataset (default: Data)
@@ -92,7 +93,10 @@ case "score":
 
 case "learn":
     let (dishes, description) = loadDataset()
-    let learner = RuleLearner(minimumSupport: Int(option("--min-support") ?? "") ?? 3)
+    let learner = RuleLearner(
+        minimumSupport: Int(option("--min-support") ?? "") ?? 3,
+        minimumRestaurants: Int(option("--min-restaurants") ?? "") ?? 2
+    )
     let proposals = learner.propose(from: dishes)
 
     if proposals.isEmpty {

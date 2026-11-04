@@ -220,7 +220,7 @@ public nonisolated enum AllergenRules {
     soba: gluten~
     ramen: gluten!, soy~, eggs?, sesame?
     chow mein, lo mein: gluten!, soy~, eggs?
-    pasta, spaghetti, linguine, linguini, tagliatelle, fettuccine, pappardelle, penne, rigatoni, fusilli, farfalle, orzo, macaroni, cannelloni, orecchiette, conchiglie: gluten!, eggs?
+    pasta, spaghetti, linguine, linguini, tagliatelle, tagliolini, fettuccine, fettuccelle, pappardelle, penne, rigatoni, fusilli, farfalle, orzo, macaroni, cannelloni, orecchiette, conchiglie, paccheri, bucatini, trofie, casarecce, panuozzo, panuozzi: gluten!, eggs?
     ravioli, tortellini, agnolotti: gluten!, eggs~, milk?
     gnocchi: gluten~, eggs?, milk?
     lasagne, lasagna: gluten!, milk!, eggs?, celery?
@@ -245,7 +245,7 @@ public nonisolated enum AllergenRules {
     hot dog: gluten~, sulphites~, mustard~
 
     # ── Crustaceans ───────────────────────────────────────────────────────────────
-    prawn, shrimp, crab, lobster, langoustine, crayfish, krill, chancre, belacan: crustaceans!
+    prawn, shrimp, crab, lobster, langoustine, crayfish, krill, chancre, belacan, gambas, gamba, gamberi, gamberoni, camarones, crevette: crustaceans!
     scampi: crustaceans!, gluten~
     prawn cocktail: crustaceans!, eggs!, mustard?, gluten?
     marie rose: eggs!, mustard?
@@ -282,6 +282,8 @@ public nonisolated enum AllergenRules {
     caesar: eggs~, fish~, milk~, gluten~, mustard?
     nicoise: fish~, eggs~, mustard?
     puttanesca: fish~
+    tonnato: fish!, eggs!
+    poisson: fish!
     salsa verde: fish?, mustard?
     tapenade: fish?
     worcestershire, worcester sauce: fish~, gluten~, sulphites?

@@ -4,11 +4,11 @@ import Testing
 @testable import MenuEngineTraining
 
 /// Made-up ingredient names, so these tests don't depend on (or claim) real recipes.
-private func dish(_ name: String, _ description: String = "", _ allergens: UKAllergen..., mayContain: [UKAllergen] = []) -> LabelledDish {
+private func dish(_ name: String, _ description: String = "", _ allergens: UKAllergen..., mayContain: [UKAllergen] = [], restaurant: String = "Test Kitchen") -> LabelledDish {
     var labels: [UKAllergen: AllergenLabel] = [:]
     for allergen in allergens { labels[allergen] = .contains }
     for allergen in mayContain { labels[allergen] = .mayContain }
-    return LabelledDish(source: "test", restaurant: "Test Kitchen", dish: name, description: description, labels: labels)
+    return LabelledDish(source: "test", restaurant: restaurant, dish: name, description: description, labels: labels)
 }
 
 @Suite("Dataset CSV")
@@ -89,8 +89,8 @@ struct ScorecardTests {
 
 @Suite("Rule learner")
 struct RuleLearnerTests {
-    private let menus: [LabelledDish] = (1...6).map { dish("Blorvak sauce \($0)", "with grilled chicken", .mustard) }
-        + (1...6).map { dish("Tomato sauce \($0)", "with grilled chicken") }
+    private let menus: [LabelledDish] = (1...6).map { dish("Blorvak sauce \($0)", "with grilled chicken", .mustard, restaurant: "Kitchen \($0 % 2)") }
+        + (1...6).map { dish("Tomato sauce \($0)", "with grilled chicken", restaurant: "Kitchen \($0 % 2)") }
 
     @Test func proposesTheWordThatExplainsTheMisses() {
         let proposals = RuleLearner().propose(from: menus)
@@ -103,6 +103,13 @@ struct RuleLearnerTests {
 
     @Test func needsEnoughExamples() {
         #expect(RuleLearner(minimumSupport: 7).propose(from: menus).isEmpty)
+    }
+
+    @Test func ignoresOneKitchensHouseRecipes() {
+        // Six dishes, all from one restaurant: its house style, not a rule for every menu.
+        let oneKitchen = (1...6).map { dish("Blorvak sauce \($0)", "", .mustard, restaurant: "Only Kitchen") }
+        #expect(RuleLearner().propose(from: oneKitchen).isEmpty)
+        #expect(RuleLearner(minimumRestaurants: 1).propose(from: oneKitchen).map(\.term) == ["blorvak"])
     }
 
     @Test func learnedRulesParseAndCatchTheMisses() {
